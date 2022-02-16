@@ -60,7 +60,7 @@ hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 end)
 
 hook.Add("HUDPaint", "20j8i34rt", function()
-	if isDebugging and LIGHTSABER_PLUS_DEBUG_MODE then
+	if isDebugging then
 		for k,v in pairs(customDebugLines) do
 			local p = v.start:ToScreen()
 			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
@@ -302,7 +302,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 
 	local thickness = 1.5
 	local thicknessInner = 1
-	local fadeLength = LSP.Config.SaberTrail_SPEED
+	local fadeLength = LSP.Config.SaberTrailSpeed
 	local fadeSep = 5
 	
 	ang:RotateAroundAxis(ang:Right(), 90)
@@ -346,7 +346,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 			if animatedFrame >= item.bladeFrames then animatedFrame = 1 end
 			frameTurn = CurTime() + 0.1
 		end
-		render.SetMaterial(mat("hydrasabers/blades/animated/" .. item.animatedBlade .. "_f" .. animatedFrame ..".png"))
+		render.SetMaterial(mat("saberplussabers/blades/animated/" .. item.animatedBlade .. "_f" .. animatedFrame ..".png"))
 		render.DrawBeam( pos, pos + ang:Up() * -len, thickness, 1, 0, innerColor )
 	else
 		render.SetMaterial(mat(item.bladeMaterial))
@@ -361,14 +361,14 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 			render.SetMaterial(mat(item.trailMaterialOuterLeft))
 			render.DrawQuad(pos, pos, ply.blades[name].pos2 + ply.blades[name].ang2:Up() * -(len+1.5), pos + ang:Up() * -(len+1.5),  color)
 
-			render.SetMaterial(mat("hydrasabers/basic/white.png"))
+			render.SetMaterial(mat("saberplussabers/basic/white.png"))
 			render.DrawQuad(pos, pos, ply.blades[name].pos + ply.blades[name].ang:Up() * -len, pos + ang:Up() * -len,  innerColor)
 
 
 			render.SetMaterial(mat(item.trailMaterialOuterRight))
 			render.DrawQuad(pos, pos, pos + ang:Up() * -(len+1.5), ply.blades[name].pos2 + ply.blades[name].ang2:Up() * -(len+1.5), color)
 			
-			render.SetMaterial(mat("hydrasabers/basic/white.png"))
+			render.SetMaterial(mat("saberplussabers/basic/white.png"))
 			render.DrawQuad(pos, pos, pos + ang:Up() * -len, ply.blades[name].pos + ply.blades[name].ang:Up() * -len, innerColor)
 		end
 	end
@@ -382,12 +382,12 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 			sparkFrame = sparkFrame + 1
 			if sparkFrame >= sparkMax then
 				sparkFrame = 1
-				sparkMax = math.random(90,220)
+				sparkMax = item.effectfrequenzy and item.effectfrequenzy or math.random(90,220)
 			end
 			sparkTurn = CurTime() + 0.01
 		end
 		if sparkFrame < item.effectFrames then
-			render.SetMaterial(mat("hydrasabers/effects/animated/" .. item.animatedEffect .. "_f" .. sparkFrame ..".png"))
+			render.SetMaterial(mat("saberplussabers/effects/animated/" .. item.animatedEffect .. "_f" .. sparkFrame ..".png"))
 			render.DrawBeam( pos, pos + ang:Up() * -len, thickness*2.5, 1, 0.01, innerColor )
 		end
 	end

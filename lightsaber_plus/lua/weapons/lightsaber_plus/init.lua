@@ -30,7 +30,7 @@ function SWEP:PrimaryAttack()
 						end
 					end
 					self.primaryDelay = CurTime() + 0.75
-					self.lastRoll = CurTime() + LIGHTSABER_PLUS_ROLL_DELAY
+					self.lastRoll = CurTime() + LSP.Config.RollDelay
 					return
 				else
 					local tr = ply:GetEyeTrace()
@@ -66,23 +66,23 @@ function SWEP:PrimaryAttack()
 	ply.currentForm = ply.currentForm or LSP.Config.DefaultForm
 	local form = ply.currentForm
 	
-	local maxCombo = #LIGHTSABER_PLUS_FORMS[form].w
+	local maxCombo = #LSP.Config.Forms[form].w
 	
 	if ply:KeyDown(IN_MOVELEFT) then
-		maxCombo = #LIGHTSABER_PLUS_FORMS[form].a
+		maxCombo = #LSP.Config.Forms[form].a
 	end
 	
 	if ply:KeyDown(IN_MOVERIGHT) then
-		maxCombo = #LIGHTSABER_PLUS_FORMS[form].d
+		maxCombo = #LSP.Config.Forms[form].d
 	end
 	
 	if ply:KeyDown(IN_FORWARD) then
 		if ply:KeyDown(IN_MOVELEFT) then
-			maxCombo = #LIGHTSABER_PLUS_FORMS[form].wa
+			maxCombo = #LSP.Config.Forms[form].wa
 		end
 		
 		if ply:KeyDown(IN_MOVERIGHT) then
-			maxCombo = #LIGHTSABER_PLUS_FORMS[form].wd
+			maxCombo = #LSP.Config.Forms[form].wd
 		end
 	end
 	
@@ -111,7 +111,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].a[self.comboNumber]
+				data = LSP.Config.Forms[form].a[self.comboNumber]
 			end
 			
 			if ply:KeyDown(IN_MOVERIGHT) then
@@ -120,7 +120,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].d[self.comboNumber]
+				data = LSP.Config.Forms[form].d[self.comboNumber]
 			end
 		end
 		
@@ -131,7 +131,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].wa[self.comboNumber]
+				data = LSP.Config.Forms[form].wa[self.comboNumber]
 			end
 		
 			if ply:KeyDown(IN_MOVERIGHT) then
@@ -140,7 +140,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].wd[self.comboNumber]
+				data = LSP.Config.Forms[form].wd[self.comboNumber]
 			end
 		end
 		
@@ -150,7 +150,7 @@ function SWEP:PrimaryAttack()
 			if self.comboNumber > bitLevel then
 				self.comboNumber = 1
 			end
-			data = LIGHTSABER_PLUS_FORMS[form].w[self.comboNumber]
+			data = LSP.Config.Forms[form].w[self.comboNumber]
 		end
 		local anim = data.anim
 		local len = ply:SequenceDuration(ply:LookupSequence(anim)) - data.shave
@@ -219,8 +219,8 @@ function SWEP:SecondaryAttack()
 	
 	if not self:getsyncLightsaberPlusData("saberOn") then
 		self:syncLightsaberPlusData("saberOn", true)
-		self:SetWeaponHoldType( LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
-		self:SetHoldType( LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
+		self:SetWeaponHoldType( LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
+		self:SetHoldType( LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
 		self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_on.mp3")
 	end
 	
@@ -304,8 +304,8 @@ function SWEP:Reload()
 				self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_off.mp3")
 			end
 		else
-			self:SetWeaponHoldType(LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
-			self:SetHoldType(LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
+			self:SetWeaponHoldType(LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
+			self:SetHoldType(LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
 			if not item.isMelee then
 				self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_on.mp3")
 			end

@@ -172,12 +172,12 @@ function createCrystal(name, wm, dmg, onHit, mtl)
 			mdl = "models/"..mdl.."/"..mdl..".mdl",
 			desc = "+"..dmg.." DMG",
 			color = color,
-			bladeMaterial = mtl or "hydrasabers/blades/normal.png",
-			glowMaterial = "hydrasabers/glows/normal.png",
-			trailMaterialLeft = "hydrasabers/trails/trailFadeLeft.png",
-			trailMaterialRight = "hydrasabers/trails/trailFadeRight.png",
-			trailMaterialOuterLeft = "hydrasabers/trails/glowLeft.png",
-			trailMaterialOuterRight = "hydrasabers/trails/glowRight.png",
+			bladeMaterial = mtl or "saberplussabers/blades/normal.png",
+			glowMaterial = "saberplussabers/glows/normal.png",
+			trailMaterialLeft = "saberplussabers/trails/trailFadeLeft.png",
+			trailMaterialRight = "saberplussabers/trails/trailFadeRight.png",
+			trailMaterialOuterLeft = "saberplussabers/trails/glowLeft.png",
+			trailMaterialOuterRight = "saberplussabers/trails/glowRight.png",
 			
 			--animatedBlade = "smokey/unstable",
 			--animatedEffect = "lightning/lightning",
@@ -192,6 +192,16 @@ function createCrystal(name, wm, dmg, onHit, mtl)
 		})
 	end
 end
+
+hook.Add("LS+.FinishedLoading", "LS+.LoadItems", function()
+	hook.Run("LS+.RegisterItems")
+	hook.Add("LS+.Reload", "LS+.LoadItems", function()
+		hook.Run("LS+.RegisterItems")
+	end)
+end)
+
+
+hook.Add("LS+.RegisterItems", "LS+.DefaultItems", function()
 
 createCrystal("Kathracite", "", 10, function(ply, vic, item)end)
 createCrystal("Mephite", "2", 25, function(ply, vic, item)end)
@@ -227,14 +237,6 @@ addItem("kyber_crystal_super_cool", {
 	canDrop = function() return true end
 })
 */
-
-hook.Add("LS+.FinishedLoading", "LS+.LoadItems", function()
-	hook.Run("LS+.RegisterItems")
-	hook.Add("LS+.Reload", "LS+.LoadItems", function()
-		hook.Run("LS+.RegisterItems")
-	end)
-end)
-
 
 addItem("crystal_inner_corrupt", {
 	name = "Inner: Corrupted Black",
@@ -277,7 +279,7 @@ addItem("lightsaber_tonfaforward", {
 	name = "Lightsaber Hilt: Tonfa (Forward)",
 	mdl = "models/saberplus/xozz/tonfaforward.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -286,7 +288,7 @@ addItem("lightsaber_maulunique", {
 	name = "Lightsaber Hilt: Maul Unique",
 	mdl = "models/xozz/saberplus/xozzyisthebestcoder.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -295,7 +297,7 @@ addItem("lightsaber_maulunique_one", {
 	name = "Lightsaber Hilt: New Age Maul",
 	mdl = "models/xozz/saberplus/xozzyisthebestcoder_dual.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -304,7 +306,7 @@ addItem("lightsaber_maulunique_two", {
 	name = "Lightsaber Hilt: New Age Maul (Flipped)",
 	mdl = "models/xozz/saberplus/xozzyisthebestcoder_flip.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -313,7 +315,7 @@ addItem("lightsaber_calamity", {
 	name = "Lightsaber Hilt: Calamity",
 	mdl = "models/borth-twin/borth-twin.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -322,7 +324,7 @@ addItem("lightsaber_creator", {
 	name = "Lightsaber Hilt: Creator",
 	mdl = "models/lightsaber2/lightsaber2.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -331,7 +333,7 @@ addItem("lightsaber_dauntless", {
 	name = "Lightsaber Hilt: Dauntless",
 	mdl = "models/unknown/unknown.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -340,7 +342,7 @@ addItem("lightsaber_elderpike", {
 	name = "Lightsaber Hilt: Elder Pike",
 	mdl = "models/donation2/donation2.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -349,7 +351,7 @@ addItem("lightsaber_equilibrium", {
 	name = "Lightsaber Hilt: Equilibrium",
 	mdl = "models/theo/theo.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -358,7 +360,7 @@ addItem("lightsaber_tridentdual", {
 	name = "Lightsaber Hilt: Dual Trident",
 	mdl = "models/trident/trident.mdl",
 	desc = "Standard Weapons",
-	class = "lightsaber_plus", 
+	class = "lightsaber_plus",
 	func = saberFuncs,
 	canDrop = gunDrop
 })
@@ -1955,3 +1957,5 @@ addItem("lightsaber_ziostguardian'slightsaber", {
 	func = saberFuncs,
 	canDrop = gunDrop
 })
+
+end)

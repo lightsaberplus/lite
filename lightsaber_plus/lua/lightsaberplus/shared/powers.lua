@@ -13,9 +13,9 @@ function meta:getForce()
 end
 
 function meta:getMaxForce()
-	LSP.Config.Max_Force[self:Team()] = LSP.Config.Max_Force[self:Team()] or 0
+	LSP.Config.MaxForce[self:Team()] = LSP.Config.MaxForce[self:Team()] or 0
 	local add = self:getsyncLightsaberPlusData("additiveForce", 0)
-	return LSP.Config.Max_Force[self:Team()] + add
+	return LSP.Config.MaxForce[self:Team()] + add
 end
 
 function addPower(key, data)

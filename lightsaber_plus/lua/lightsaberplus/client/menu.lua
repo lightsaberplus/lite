@@ -624,8 +624,8 @@ function formSelection()
 	f.inv = vgui.Create("DScrollPanel", f)
 	f.inv:Dock(FILL)
 	
-	for _,form in pairs(LIGHTSABER_PLUS_FORM_ORDER) do
-		local data = LIGHTSABER_PLUS_FORMS[form]
+	for _,form in pairs(LSP.Config.FormOrder) do
+		local data = LSP.Config.Forms[form]
 
 		local p = vgui.Create("DPanel", f.inv)
 		p:SetSize(150,150)

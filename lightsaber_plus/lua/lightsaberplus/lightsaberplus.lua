@@ -2,9 +2,9 @@ LSP = LSP or {
     Version = "0.5",
     Config = {
         Forms = {},
-        Max_Force = {},
-        Team_Force_Powers = {},
-        Form_Order = {},
+        MaxForce = {},
+        TeamForcePowers = {},
+        FormOrder = {},
         Rarities = {
             Basic = Color(255, 255, 255),
             Grand = Color(59, 156, 48),
@@ -26,8 +26,8 @@ function LSP:Initialize()
         local succ, err = pcall(include, "lightsaberplus_config.lua")
         if succ then
             // err is now the returned table
-            LSP.Config = err
-            hook.Run("LS+.Config.Reloaded", LSP.Config)
+            table.Merge(LSP.Config, err)
+            hook.Run("LS+.Config.Reloaded")
         else
             print("You fucked up your Lightsaberplus Config")
             print(err)
@@ -37,7 +37,7 @@ function LSP:Initialize()
     validateconfig()
     hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
 
-    local f, dlcs = file.Find("lightsaberplus/dlcs", "LUA")
+    local f, dlcs = file.Find("lightsaberplus/dlcs/", "LUA")
     for _, path in ipairs(dlcs or {}) do
         if file.Exists("lightsaberplus/dlcs/"..path.."/"..path..".lua", "LUA") then
             AddCSLuaFile("lightsaberplus/dlcs/"..path.."/"..path..".lua")
@@ -47,26 +47,26 @@ function LSP:Initialize()
     hook.Run("LS+.DLCsLoaded")
 
     // Shared Loading
-    for file, _ in ipairs(file.Find("lightsaberplus/shared", "LUA", "nameasc")) do
+    for _, file in ipairs(file.Find("lightsaberplus/shared/*", "LUA", "nameasc")) do
         if SERVER then
-            AddCSLuaFile("lightsaberplus/shared/"..file..".lua", "nameasc")
+            AddCSLuaFile("lightsaberplus/shared/"..file)
         end
-        include("lightsaberplus/shared/"..file..".lua")
+        include("lightsaberplus/shared/"..file)
     end
 
     // Serverside Loading
     if SERVER then
-        for filename, _ in ipairs(file.Find("lightsaberplus/server", "LUA", "nameasc")) do
-            include("lightsaberplus/server/"..filename..".lua")
+        for _, filename in ipairs(file.Find("lightsaberplus/server/*", "LUA", "nameasc")) do
+            include("lightsaberplus/server/"..filename)
         end
     end
 
     // Clientside Loading
-    for file, _ in ipairs(file.Find("lightsaberplus/client", "LUA", "nameasc")) do
+    for _, file in ipairs(file.Find("lightsaberplus/client/*", "LUA", "nameasc")) do
         if SERVER then
-             AddCSLuaFile("lightsaberplus/client/"..file..".lua", "nameasc")
+             AddCSLuaFile("lightsaberplus/client/"..file)
         else
-            include("lightsaberplus/client/"..file..".lua")
+            include("lightsaberplus/client/"..file)
         end
     end
 
@@ -77,11 +77,11 @@ end
 hook.Add("InitPostEntity", "LS+.Initialize", LSP.Initialize)
 
 
-hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function(cfg)
-    cfg.FormOrder[1] = "Shii-Cho"
-    cfg.FormOrder[2] = "Makashi"
+hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function()
+    LSP.Config.FormOrder[1] = "Shii-Cho"
+    LSP.Config.FormOrder[2] = "Makashi"
 
-    cfg.Forms["Shii-Cho"] = {
+    LSP.Config.Forms["Shii-Cho"] = {
     	desc = "Traditional maneuvers intent on maiming and killing with a focus on disarming an armed foe. Used against superior number of opponenets.",
     	icon = "I",
     	lvl = 0,
@@ -119,7 +119,7 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function(cfg)
     	}
     }
 
-    cfg.Forms["Makashi"] = {
+    LSP.Config.Forms["Makashi"] = {
     	desc = "Its primary focus on facing a single opponent and the avoidance of being disarmed by an opponent while simultaneously working to disarming them.",
     	icon = "II",
     	lvl = 0,
@@ -157,3 +157,8 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function(cfg)
     	}
     }
 end)
+
+
+if false then
+	hook.Add("LS+.Reload", "Reload", LSP.Initialize)
+end

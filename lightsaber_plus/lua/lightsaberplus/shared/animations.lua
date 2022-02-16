@@ -139,14 +139,8 @@ function overrideAnimation()
 		
 		local animType = {run = "run_all", idle = "walk_knife", walk = "walk_knife"}
 
-		//if LIGHTSABER_PLUS_CONFIG then
-		animType = LIGHTSABER_PLUS_FORMS[fm]
-		//end
-		
-		--ply:ChatPrint(animType.run)
-		--PrintTable(form)
-		--ply:ChatPrint("dsaHUushdiauhisda")
-		
+		animType = LSP.Config.Forms[fm]
+
 		ply.mode = ACT_MP_STAND_IDLE
 		
 		ply.sequence = -1

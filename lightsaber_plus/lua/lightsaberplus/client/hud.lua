@@ -76,10 +76,10 @@ hook.Add("HUDPaint", "soimjdfghdfgh", function()
 	--staminaLerp = Lerp(FrameTime()*8, staminaLerp, stm)
 	--forceLerp = Lerp(FrameTime()*8, forceLerp, frc)
 	
-	--LSP.Config.Max_Force[ply:Team()] = LSP.Config.Max_Force[ply:Team()] or 0
+	--LSP.Config.MaxForce[ply:Team()] = LSP.Config.MaxForce[ply:Team()] or 0
 	
 	--local stmPerc = staminaLerp / 100
-	--local frcPerc = forceLerp / LSP.Config.Max_Force[ply:Team()]
+	--local frcPerc = forceLerp / LSP.Config.MaxForce[ply:Team()]
 	
 	--draw.RoundedBox( barHeight/2, 10, ScrH() * LSP.Config.HUDPerc, barLength, barHeight, Color(17,17,17,200))
 	--draw.RoundedBox( (barHeight-(subBarSize))/2, 10 + (subBarSize/2), ScrH() * LSP.Config.HUDPerc + (subBarSize/2), (barLength - subBarSize)*stmPerc, barHeight-subBarSize, Color(177,177,0))	

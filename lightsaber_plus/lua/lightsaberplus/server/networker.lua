@@ -8,7 +8,7 @@ util.AddNetworkString("lightsaber+ form swap")
 
 net.Receive("lightsaber+ form swap", function(len, ply)
 	local fm = net.ReadString()
-	local form = LIGHTSABER_PLUS_FORMS[fm]
+	local form = LSP.Config.Forms[fm]
 	if form then
 		if form.whitelisted then
 			local whitelisted = ply:getsyncLightsaberPlusData("whitelistedForm_"..form, "false")

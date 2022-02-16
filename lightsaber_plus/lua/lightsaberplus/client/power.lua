@@ -869,8 +869,8 @@ function openNewPowers(f, mode)
 	
 	for id,data in pairs(getAllPowers()) do
 		local canSee = false
-		LIGHTSABER_PLUS_TEAM_FORCE_POWERS[ply:Team()] = LIGHTSABER_PLUS_TEAM_FORCE_POWERS[ply:Team()] or {}
-		if LIGHTSABER_PLUS_TEAM_FORCE_POWERS[ply:Team()][id] then
+		LSP.Config.TeamForcePowers[ply:Team()] = LSP.Config.TeamForcePowers[ply:Team()] or {}
+		if LSP.Config.TeamForcePowers[ply:Team()][id] then
 			canSee = true
 		end
 		

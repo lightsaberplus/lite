@@ -298,8 +298,8 @@ net.Receive("saberplus-cast-power", function(len, ply)
 		local cost = power.cost
 		
 		local canUse = false
-		LSP.Config.Team_Force_Powers[ply:Team()] = LSP.Config.Team_Force_Powers[ply:Team()] or {}
-		if LSP.Config.Team_Force_Powers[ply:Team()][id] then
+		LSP.Config.TeamForcePowers[ply:Team()] = LSP.Config.TeamForcePowers[ply:Team()] or {}
+		if LSP.Config.TeamForcePowers[ply:Team()][id] then
 			canUse = true
 		end
 		
