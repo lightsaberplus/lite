@@ -109,10 +109,11 @@ function drawSlice(ply, blade, pos, ang, len)
 end
 
 local lerpLengths = {}
-
+ 
 function validateSabers(ply)
-	ply.leftHilt = ply.leftHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
-	ply.rightHilt = ply.rightHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
+	// useless bc of the if clauses after
+	//ply.leftHilt = ply.leftHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
+	//ply.rightHilt = ply.rightHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
 	if !(IsValid(ply.rightHilt)) then
 		ply.rightHilt = ClientsideModel("models/props_junk/TrafficCone001a.mdl")
 	end
@@ -121,13 +122,8 @@ function validateSabers(ply)
 	end
 	ply.leftHilt.player = ply
 	ply.rightHilt.player = ply
-	local id = 0
-	if ply:IsBot() then
-		ply.id = ply.id or "BOT_" .. math.random(11111,99999)
-		id = ply.id
-	else
-		id = ply:id()
-	end
+	local id = ply:id()
+
 	drawnBlades[id] = {}
 	drawnBlades[id].left = ply.leftHilt
 	drawnBlades[id].right = ply.rightHilt
@@ -264,6 +260,7 @@ function searchAttachments(ply, wep, saber, left)
 				local quillonClass = wep:getsyncLightsaberPlusData("quillonItem"..id, "")
 				local item = LSP.GetItem(quillonClass)
 				
+				-- third arg is quillon length
 				drawQuillion(blade.Pos, blade.Ang, 4, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item)
 				
 				if item then
@@ -439,9 +436,12 @@ end
 
 function drawQuillion(pos, ang, len, color, innerColor, item)
 	render.SetMaterial(mat(item.glowMaterial))
-	render.DrawBeam( pos, pos + ang:Up() * -(len), 2, 1, 0, color )
+	--render.DrawBeam( pos, pos + ang:Up() * -(len), 2, 1, 0, color )
+	render.DrawBeam( pos, pos + ang:Forward() * (len), 2, 1, 0, color )
 	render.SetMaterial(mat(item.bladeMaterial))
-	render.DrawBeam( pos, pos + ang:Up() * -(len-0.5), 0.75, 1, 0, innerColor )
+	--render.DrawBeam( pos, pos + ang:Up() * -(len-0.5), 0.75, 1, 0, innerColor )
+	render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+
 end
 
 hook.Add( "PostDrawTranslucentRenderables", "4222222222222222222222222222g", function(ply)

@@ -61,7 +61,20 @@ net.Receive("saberplus-riposte", function()
 end)
 
 
-
+local hide = {
+	["CHudHealth"] = true,
+	["CHudBattery"] = true,
+	["CHudAmmo"] = true,
+	["CHudVoiceStatus"] = true,
+	["CHudVoiceSelfStatus"] = true,
+	["CHudEnergy"] = true,
+	["DarkRP_EntityDisplay"] = true,
+	["DarkRP_HUD"] = true,
+	["CHudSecondaryAmmo"] = true
+}
+hook.Add( "HUDShouldDraw", "HideHUD", function( name )
+	if ( hide[ name ] ) then return false end
+end)
 
 
 
@@ -226,63 +239,47 @@ end
 
 
 local xpPerc = 0
+local from = 0
+local cache = 0
 hook.Add("HUDPaint", "LS+ XP Bar", function()
 	local ply = LocalPlayer()
 	if !IsValid(ply:GetActiveWeapon()) then return end
 	if ply:GetActiveWeapon():GetClass() != "lightsaber_plus" then return end
+	local hp, maxhp = math.Clamp(ply:Health(), 0, ply:GetMaxHealth()), ply:GetMaxHealth()
 	local lvl = ply:getsyncLightsaberPlusData("saberLevel", 0)
 	local xp = ply:getsyncLightsaberPlusData("saberXP", 0)
-	
+
 	local maxW = 600
 	local perc = xp / 1000
-	
 	xpPerc = Lerp(FrameTime()*6, xpPerc, perc)
-	
-	local curW = maxW * xpPerc
-	
-	drawOutlineBar("Player Level: " ..lvl, ScrW()/2 - 300, 20, maxW, 15, perc)
-	
-	local stm = ply:getsyncLightsaberPlusData("staminaPower", 0)
-	drawOutlineBar("Stamina: " .. stm .. " / " .. 100, 25, ScrH() * LSP.Config.HUDPerc - 50, 200, 15, stm / 100)
-	drawOutlineBar("Force: " .. ply:getForce() .. " / " .. ply:getMaxForce(), 25, ScrH() * LSP.Config.HUDPerc, 200, 15, ply:getForce() / ply:getMaxForce())
-	
-	local directions = {
-		"w",
-		"a",
-		"d",
-		"wa",
-		"wd",
-	}
-	
-	local lang = {}
-	lang.w = "Lunge"
-	lang.a = "Left"
-	lang.wa = "D. Left"
-	lang.d = "Right"
-	lang.wd = "D. Right"
-	
-	for i=1,5 do
-		local dir = directions[i]
-		local form = ply:getsyncLightsaberPlusData("currentForm", LSP.Config.DefaultForm)
-		
-		local lvl = ply:getsyncLightsaberPlusData("form_"..form.."_"..dir.."_lvl", 0)
-		local xp = ply:getsyncLightsaberPlusData("form_"..form.."_"..dir.."_xp", 0)
-		
-		local maxW = 200
-		local perc = xp / 1000
-		
-		xpPerc = Lerp(FrameTime()*6, xpPerc, perc)
-		
-		local curW = maxW * xpPerc
-		if lvl != 9999 then
-			drawOutlineBar(lang[dir] ..": " ..lvl, ScrW() - 225, 20 + (45*(i-1)), maxW, 15, perc)
+
+	local wide = Lerp(FrameTime()*6, from, perc)
+	if from ~= perc then
+		if wide ~= perc then
+			from = wide
 		end
+		cache = from 
+		from = perc
 	end
+
+	local curW = maxW * xpPerc
+
+
+	draw.RoundedBox(10, ScrW()/2 - 300, ScrH()/2 - 520, 605, 18, Color(0, 0, 0, 220)) 
+	draw.RoundedBox(10, ScrW()/2 - 296, ScrH()/2 - 517, 600*wide, 12, Color(178, 125, 93, 255))
+	draw.SimpleText("" ..lvl, "cbutton", 600, 15, Color(255, 255, 255, 220))
+	draw.SimpleText("" ..lvl+1, "cbutton", 1300, 15, Color(255, 255, 255, 220))
+
+
+
+	local stm = ply:getsyncLightsaberPlusData("staminaPower", 0)
+	draw.RoundedBox(10, ScrW()/2 - 125, ScrH() - 130, 250, 8, Color(0, 0, 0, 220))
+	draw.RoundedBox(10, ScrW()/2 - 123, ScrH() - 128, stm*2.46, 4, Color(99, 97, 97, 220))
+
+	draw.RoundedBox(10, ScrW()/2 - 150, ScrH() - 100, 300, 12, Color(0, 0, 0, 220))
+	draw.RoundedBox(10, ScrW()/2 - 148, ScrH() - 98, ply:getForce() / ply:getMaxForce() * 296, 8, Color(77, 129, 163, 220))
+
+	draw.RoundedBox(10, ScrW()/13 - 2, ScrH() - 100, 300, 12, Color(0, 0, 0, 220))
+	draw.RoundedBox(10, ScrW()/13 , ScrH() - 98, 296 * (hp/maxhp), 8, Color(81, 148, 131, 255))
 	
 end)
-
-
-
-
-
-

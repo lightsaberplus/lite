@@ -28,7 +28,7 @@ function LSP:Initialize()
     validateconfig()
     hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
 
-    local f, dlcs = file.Find("lightsaberplus/dlcs/", "LUA")
+    local f, dlcs = file.Find("lightsaberplus/dlcs/*", "LUA")
     for _, path in ipairs(dlcs or {}) do
         if file.Exists("lightsaberplus/dlcs/"..path.."/"..path..".lua", "LUA") then
             AddCSLuaFile("lightsaberplus/dlcs/"..path.."/"..path..".lua")
@@ -147,4 +147,21 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function()
     		{anim = "pure_h_s1_t2", rate = 1.25, dmg = 1.5, shave = 0.1, speed = 25},
     	}
     }
+end)
+
+hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
+
+	local gm = gmod.GetGamemode()
+
+	if gm.Name == "Sandbox" then
+		LSP.Config.MaxForce["1001"] = 100000
+		LSP.Config.TeamForcePowers["1001"] = {
+			["*"] = true
+		}
+	elseif DarkRP then
+
+	elseif nut then
+
+	end
+
 end)
