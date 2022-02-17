@@ -4,7 +4,7 @@ local len = string.len
 local sub = string.sub
 local random = math.random
 
-function scramble(s)
+local function scramble(s)
 	local n = ""
 	for i=1,len(s) do
 		local l = len(s)
@@ -19,7 +19,7 @@ function scramble(s)
 	return n
 end
 
-function generateHash(a,b)
+local function generateHash(a,b)
 	local h = ""
 	local k = scramble("Zuf2txeXAOHqj8ySD4Wo3LbIgnN5vhadpFzPCmB0VQGwK9l1UciRrTMEsJY6k7")
 	for i=1,a do
@@ -37,7 +37,7 @@ function meta:getInv()
 	local customData = {}
 	for hash,id in pairs(t) do
 		customData[hash] = {}
-		local item = getItem(id)
+		local item = LSP.GetItem(id)
 		if item then
 			customData[hash].name = itemGetData(hash, "customName", item.name)
 			customData[hash].desc = itemGetData(hash, "customDesc", item.desc)
@@ -53,7 +53,7 @@ function meta:saveInventory(x)
 end
 
 function meta:giveItem(id,newKey)
-	if not items[id] then return false end
+	if not LSP.GetItem(id) then return false end
 	local inv = self:getInv()
 	newKey = newKey or generateHash(10,5)
 	inv[newKey] = id
@@ -72,7 +72,7 @@ function meta:closeInv()
 end
 
 function meta:takeItem(id, hash)
-	if not items[id] then return false end
+	if not LSP.GetItem(id) then return false end
 	local inv = self:getInv()
 	local removed = false
 	if hash then
@@ -109,7 +109,7 @@ end
 function spawnLightsaberPlusItem(id, pos, hash)
 	hash = hash or generateHash(10,5)
 	local world_item = ents.Create("saberplus_item")
-	local item = getItem(id)
+	local item = LSP.GetItem(id)
 	world_item.itemClass = id
 	world_item.itemHash = hash
 	world_item:SetPos(pos)
@@ -127,7 +127,7 @@ net.Receive("saberplus-net-inv-act", function(len,ply)
 	
 	local inv = ply:getInv()
 	local itemClass = inv[hash]
-	local item = getItem(itemClass)
+	local item = LSP.GetItem(itemClass)
 
 	if item then
 		local id = item.id

@@ -22,7 +22,7 @@ function handleInventory(f, invPanel, inv)
 	f.inv = panel
 	
 	for hash,id in SortedPairsByValue(inv, true) do
-		local item = getItem(id)
+		local item = LSP.GetItem(id)
 		if item then
 			if item.isCrystal then
 				local bar = vgui.Create("DPanel", panel)
@@ -456,7 +456,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 
 	for blade,id in pairs(blades) do
 		if !(id == "") then
-			local item = getItem(id)
+			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.bladeSlots[blade])
 				icon:SetSize(tickSize*4,tickSize*4)
@@ -481,7 +481,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	
 	for blade,id in pairs(bladeInner) do
 		if !(id == "") then
-			local item = getItem(id)
+			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.bladeInners[blade])
 				icon:SetSize(tickSize*4,tickSize*4)
@@ -506,7 +506,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	
 	for quillon,id in pairs(quillons) do
 		if !(id == "") then
-			local item = getItem(id)
+			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.quillionSlots[quillon])
 				icon:SetSize(tickSize*4,tickSize*4)
@@ -531,7 +531,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 
 	for quillon,id in pairs(quillonInner) do
 		if !(id == "") then
-			local item = getItem(id)
+			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.quillonInners[quillon])
 				icon:SetSize(tickSize*4,tickSize*4)

@@ -4,16 +4,7 @@ LSP = LSP or {
         Forms = {},
         MaxForce = {},
         TeamForcePowers = {},
-        FormOrder = {},
-        Rarities = {
-            Basic = Color(255, 255, 255),
-            Grand = Color(59, 156, 48),
-            Rare = Color(49, 72, 189),
-            Unique = Color(127, 77, 14),
-            Celestial = Color(227, 68, 76),
-            Legendary = Color(217, 136, 30),
-            Mythic = Color(177, 0, 0)
-        }
+        FormOrder = {}
     }
 }
 
@@ -157,8 +148,3 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function()
     	}
     }
 end)
-
-
-if false then
-	hook.Add("LS+.Reload", "Reload", LSP.Initialize)
-end

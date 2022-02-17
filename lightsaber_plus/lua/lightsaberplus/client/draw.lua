@@ -231,7 +231,7 @@ function searchAttachments(ply, wep, saber, left)
 			if left then drawID = id * 50 end
 			
 			local bladeClass = wep:getsyncLightsaberPlusData("bladeItem"..id, "")
-			local item = getItem(bladeClass)
+			local item = LSP.GetItem(bladeClass)
 			
 			if item then
 				if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) then
@@ -262,7 +262,7 @@ function searchAttachments(ply, wep, saber, left)
 			
 			if qVec != Vector(999,999,999) then
 				local quillonClass = wep:getsyncLightsaberPlusData("quillonItem"..id, "")
-				local item = getItem(quillonClass)
+				local item = LSP.GetItem(quillonClass)
 				
 				drawQuillion(blade.Pos, blade.Ang, 4, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item)
 				
@@ -454,8 +454,8 @@ hook.Add( "PostDrawTranslucentRenderables", "4222222222222222222222222222g", fun
 				if not IsValid(wep) then return end
 				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
 				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
-				local item = getItem(class)
-				local item2 = getItem(class2)
+				local item = LSP.GetItem(class)
+				local item2 = LSP.GetItem(class2)
 				
 				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
 					hideSabers(ply, false)

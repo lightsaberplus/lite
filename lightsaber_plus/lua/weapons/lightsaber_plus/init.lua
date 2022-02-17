@@ -61,7 +61,7 @@ function SWEP:PrimaryAttack()
 	end
 	
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 
 	ply.currentForm = ply.currentForm or LSP.Config.DefaultForm
 	local form = ply.currentForm
@@ -203,7 +203,7 @@ function SWEP:isUsable()
 	end
 
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 
 	if item.isMelee then found = true end
 
@@ -213,7 +213,7 @@ end
 function SWEP:SecondaryAttack()
 	local blockTime = 0.1
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 	
 	if !(self:isUsable()) then return end
 	
@@ -287,7 +287,7 @@ function SWEP:Reload()
 	if !self.noSpam then self.noSpam = 0 end
 	if self.noSpam <= CurTime() then
 		local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-		local item = getItem(class)
+		local item = LSP.GetItem(class)
 
 		if !(self:isUsable()) then
 			self:SetWeaponHoldType( "normal" )

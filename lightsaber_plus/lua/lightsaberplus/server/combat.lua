@@ -144,7 +144,7 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 	
 	ply.currentDamageMultiplier = ply.currentDamageMultiplier or 1 -- ensuring the ply vars.
 	
-	local item = getItem(wep:getsyncLightsaberPlusData("bladeItem"..id, ""))
+	local item = LSP.GetItem(wep:getsyncLightsaberPlusData("bladeItem"..id, ""))
 	if !item then return end
 	
 	local dmg = item.damage * ply.currentDamageMultiplier
@@ -240,7 +240,7 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 	end
 	
 	local class = ply:GetActiveWeapon():getsyncLightsaberPlusData("bladeItem"..id, "")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 
 	if item then
 		if item.onHit then

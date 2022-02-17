@@ -22,7 +22,7 @@ hook.Add("Think", "0dpfksg", function() -- Force Regeneration
 	end
 end)
 
-function addPowerFunction(key, data)
+function LSP.AddPowerFunction(key, data)
 	forcePowerFunction[key] = data
 end
 
@@ -314,8 +314,8 @@ net.Receive("saberplus-cast-power", function(len, ply)
 	end
 end)
 
-hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
-	addPowerFunction("Force Block",
+hook.Add("LS+.ForcePowers", "LS+.NormalPowers", function()
+	LSP.AddPowerFunction("Force Block",
 		function(ply)
 			local wep = ply:GetActiveWeapon()
 			if wep:GetClass() == "lightsaber_plus" then
@@ -348,7 +348,7 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
 		end
 	)
 
-	addPowerFunction("Force Leap",
+	LSP.AddPowerFunction("Force Leap",
 		function(ply)
 			local force = ply:getForce()
 			local castpower = 300
@@ -466,13 +466,13 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
 		end
 	)
 
-	addPowerFunction("Force Heal",
+	LSP.AddPowerFunction("Force Heal",
 		function(ply)
 			ply:Heal(100)
 		end
 	)
 
-	addPowerFunction("Force Meditate",
+	LSP.AddPowerFunction("Force Meditate",
 		function(ply)
 			ply:anim("sit_zen",1,1)
 			ply:SetHealth(math.Clamp(ply:Health() + (5), 0, ply:GetMaxHealth()))
@@ -480,7 +480,7 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
 		end
 	)
 
-	addPowerFunction("Force Push",
+	LSP.AddPowerFunction("Force Push",
 		function(ply)
 			ply:anim("seq_baton_swing",1,0.5)
 			timer.Simple(0.2, function()
@@ -499,7 +499,7 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
 		end
 	)
 	
-	addPowerFunction("Force Speed",
+	LSP.AddPowerFunction("Force Speed",
 		function(ply)
 			ply:runSpeed(LSP.Config.RunSpeed*3)
 			ply:walkSpeed(LSP.Config.WalkSpeed*3)
@@ -513,7 +513,7 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
 		end
 	)
 
-	addPowerFunction("Mass Disarm",
+	LSP.AddPowerFunction("Mass Disarm",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() then
@@ -549,7 +549,7 @@ hook.Add("LS+.FinishedLoading", "LS+.NormalPowers", function()
     end
 )
 
-addPowerFunction("Force Lightning",
+LSP.AddPowerFunction("Force Lightning",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -609,7 +609,7 @@ addPowerFunction("Force Lightning",
     end
 )
 
-addPowerFunction("Mass Lightning",
+LSP.AddPowerFunction("Mass Lightning",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() or v:IsNPC() then
@@ -668,10 +668,9 @@ addPowerFunction("Mass Lightning",
                 end
             end
         end
-    end
-)
+    end)
 
-addPowerFunction("Force Dash",
+LSP.AddPowerFunction("Force Dash",
     function(ply)
         local isLeft = ply:KeyDown(IN_MOVELEFT)
         local isRight = ply:KeyDown(IN_MOVERIGHT)
@@ -710,7 +709,7 @@ addPowerFunction("Force Dash",
     end
 )
 
-addPowerFunction("Mass Choke",
+LSP.AddPowerFunction("Mass Choke",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() then
@@ -749,7 +748,7 @@ addPowerFunction("Mass Choke",
     end
 )
 
-addPowerFunction("Force Storm",
+LSP.AddPowerFunction("Force Storm",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() or v:IsNPC() then
@@ -819,7 +818,7 @@ addPowerFunction("Force Storm",
     end
 )
 
-addPowerFunction("Electric Judgement",
+LSP.AddPowerFunction("Electric Judgement",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -879,7 +878,7 @@ addPowerFunction("Electric Judgement",
     end
 )
 
-addPowerFunction("Mass Electric Judgement",
+LSP.AddPowerFunction("Mass Electric Judgement",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() or v:IsNPC() then
@@ -941,7 +940,7 @@ addPowerFunction("Mass Electric Judgement",
     end
 )
 
-addPowerFunction("Force Drain",
+LSP.AddPowerFunction("Force Drain",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -1001,7 +1000,7 @@ addPowerFunction("Force Drain",
     end
 )
 
-addPowerFunction("Mass Drain",
+LSP.AddPowerFunction("Mass Drain",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() or v:IsNPC() then
@@ -1064,7 +1063,7 @@ addPowerFunction("Mass Drain",
     end
 )
 
-addPowerFunction("Force Crush",
+LSP.AddPowerFunction("Force Crush",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -1095,7 +1094,7 @@ addPowerFunction("Force Crush",
     end
 )
 
-addPowerFunction("Force Combust",
+LSP.AddPowerFunction("Force Combust",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -1111,7 +1110,7 @@ addPowerFunction("Force Combust",
     end
 )
 
-addPowerFunction("Mass Combust",
+LSP.AddPowerFunction("Mass Combust",
     function(ply)
         local pos = ply:GetPos() + Vector(0,0,2)
         local e = EffectData()
@@ -1143,7 +1142,7 @@ addPowerFunction("Mass Combust",
     end
 )
 
-addPowerFunction("Force Extinguish",
+LSP.AddPowerFunction("Force Extinguish",
     function(ply)
         local tar = ply:laneTarget(3)
         ply:anim("seq_preskewer",1, 0.75)
@@ -1153,7 +1152,7 @@ addPowerFunction("Force Extinguish",
     end
 )
 
-addPowerFunction("Mass Extinguish",
+LSP.AddPowerFunction("Mass Extinguish",
     function(ply)
         ply:anim("seq_preskewer",1, 0.75)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
@@ -1166,7 +1165,7 @@ addPowerFunction("Mass Extinguish",
     end
 )
 
-addPowerFunction("Rock Throw",
+LSP.AddPowerFunction("Rock Throw",
     function(ply)
         local rocks = {
                     "models/props/CS_militia/militiarock05.mdl",
@@ -1199,7 +1198,7 @@ addPowerFunction("Rock Throw",
     end
 )
 
-addPowerFunction("Boulder Bash",
+LSP.AddPowerFunction("Boulder Bash",
     function(ply)
         local rocks = {
             "models/props_wasteland/rockgranite02c.mdl",
@@ -1231,7 +1230,7 @@ addPowerFunction("Boulder Bash",
     end
 )
 
-addPowerFunction("Chain Lightning",
+LSP.AddPowerFunction("Chain Lightning",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -1343,7 +1342,7 @@ addPowerFunction("Chain Lightning",
     end
 )
 
-addPowerFunction("Force Leech",
+LSP.AddPowerFunction("Force Leech",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then
@@ -1403,7 +1402,7 @@ addPowerFunction("Force Leech",
     end
 )
 
-addPowerFunction("Mass Leech",
+LSP.AddPowerFunction("Mass Leech",
     function(ply)
         for k,v in pairs(ents.FindInSphere(ply:GetPos(), 300)) do
             if v:IsPlayer() or v:IsNPC() then
@@ -1466,7 +1465,7 @@ addPowerFunction("Mass Leech",
     end
 )
 
-addPowerFunction("Force Scream",
+LSP.AddPowerFunction("Force Scream",
     function(ply)
         ply:EmitSound("npc/fast_zombie/fz_scream1.wav")
         ply:anim("zombie_attack_frenzy_original",1, 0.75)
@@ -1484,7 +1483,7 @@ addPowerFunction("Force Scream",
     end
 )
 
-addPowerFunction("Force Teleport",
+LSP.AddPowerFunction("Force Teleport",
     function(ply)
         local tr = ply:GetEyeTrace()
         local pos = tr.HitPos
@@ -1523,7 +1522,7 @@ addPowerFunction("Force Teleport",
     end
 )
 
-addPowerFunction("Lightning Shield",
+LSP.AddPowerFunction("Lightning Shield",
     function(ply)
         ply.absorbTimer = CurTime() + 3
         local bubble = ents.Create("prop_physics")
@@ -1554,7 +1553,7 @@ addPowerFunction("Lightning Shield",
     end
 )
 
-addPowerFunction("Force Shock",
+LSP.AddPowerFunction("Force Shock",
     function(ply)
         local tar = ply:laneTarget(3)
         if IsValid(tar) then

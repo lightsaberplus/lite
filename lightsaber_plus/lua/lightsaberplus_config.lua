@@ -50,11 +50,6 @@ return {//Dont delete this line
     RollDelay = 2,                          -- How long between each roll.
     RollSpeed = 200,                        -- How fast the combat roll thrusts you.
 
-    -- VJ NPC Decapitation.
-    -- spawns body and a head instead of one ragdoll
-    VJDecap = false,                        -- Very Laggy, doubles the ragdolls on death, very bad juju, but it cool doe.
--- premium prob
-
     -- HUD Elements.
     HUDPerc = 0.85,                         -- 0 to 1, Where the bars should appear, 0 = top 1 = bottom of screen.
     HUDHitNumberSize = 15,                  -- size of the font.
@@ -72,23 +67,14 @@ return {//Dont delete this line
     ForcePointer = true,                    -- should the plumbob exist.
 
     -- Toggleable Features
-    BoneMod = false,                        -- Manipulation of the players bone angles based on their view angles.
--- premium or unused
 
     DrawBlades = true,                      -- If set to false, no blades will be drawn.
     HitNumbers = true,                      -- Should we draw hit numbers?
     KillHud = false,                        -- Should we stop the HUD?
-    SaberTracing = false,                   -- Should we stop all saber tracing?
     KillSounds = false,                     -- Should we kill the sound engine
     KillViewMods = false,                   -- Should we turn off the view mods.
     KillDamageMod = false,                  -- Should we not determine the damage?
     CinematicCam = false,
-
-    -- Item Spawner
-    MaxItems = 10,                          -- How many items we spawn at a time.
-    ItemRespawnRate = 5,                    -- How long in minutes before we refresh looted items.
-    ItemLootTable = {},                     -- Which items we will be releasing to the world.
--- all 3 unused 
 
     -- Force Powers
     ForceNext = KEY_G,

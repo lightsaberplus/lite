@@ -80,7 +80,7 @@ net.Receive("saberplus-crystal-drop-quillon", function(len, ply)
 	local wep = ply:GetActiveWeapon()
 	
 	if inv[hash] then
-		local item = getItem(inv[hash])
+		local item = LSP.GetItem(inv[hash])
 		if item.isCrystal then
 			local wepHash = wep.hash
 			wep:syncLightsaberPlusData("quillon"..id, Vector(item.color.r, item.color.g, item.color.b))
@@ -162,7 +162,7 @@ net.Receive("saberplus-crystal-drop-blade", function(len, ply)
 	local wep = ply:GetActiveWeapon()
 	
 	if inv[hash] then
-		local item = getItem(inv[hash])
+		local item = LSP.GetItem(inv[hash])
 		if item.isCrystal then
 			local wepHash = wep.hash
 			wep:syncLightsaberPlusData("blade"..id, Vector(item.color.r, item.color.g, item.color.b))
@@ -187,7 +187,7 @@ net.Receive("saberplus-crystal-drop-inner", function(len, ply)
 	local wep = ply:GetActiveWeapon()
 	
 	if inv[hash] then
-		local item = getItem(inv[hash])
+		local item = LSP.GetItem(inv[hash])
 		if item.isInner then
 			local wepHash = wep.hash
 			wep:syncLightsaberPlusData("bladeInner"..id, Vector(item.color.r, item.color.g, item.color.b))
@@ -212,7 +212,7 @@ net.Receive("saberplus-crystal-drop-inner-quillon", function(len, ply)
 	local wep = ply:GetActiveWeapon()
 	
 	if inv[hash] then
-		local item = getItem(inv[hash])
+		local item = LSP.GetItem(inv[hash])
 		if item.isInner then
 			local wepHash = wep.hash
 			wep:syncLightsaberPlusData("quillonInner"..id, Vector(item.color.r, item.color.g, item.color.b))

@@ -92,7 +92,7 @@ net.Receive("saberplus-net-inv", function(len, ply)
 		local inv = net.ReadTable()
 		local customData = net.ReadTable()
 		for k,m in SortedPairsByValue(inv, true) do
-			local v = getItem(m)
+			local v = LSP.GetItem(m)
 			if (v) then
 				local bar = vgui.Create("DPanel", INVENTORY_PANEL.inv)
 				bar:SetSize(invScale,invScale)
@@ -222,7 +222,7 @@ end)
 concommand.Add("admInv", function()
 	inventory()
 	if IsValid(INVENTORY_PANEL) then
-		local inv = getItems()
+		local inv = LSP.GetItems()
 		for k,v in SortedPairsByMemberValue(inv, "name") do
 			local bar = vgui.Create("DPanel", INVENTORY_PANEL.inv)
 			bar:SetSize(invScale,invScale)
