@@ -30,7 +30,6 @@ function runSaberTrace(ply, bladeID, pos, ang, id)
 				end
 			})
 			if IsValid(tr.Entity) then
-				print(tr.Entity:GetClass())
 				if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsVehicle() or tr.Entity.LFS or tr.Entity:GetClass() == "training_droid" then
 					ply.active = ply.active or 0
 					if ply.active >= CurTime() then

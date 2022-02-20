@@ -38,7 +38,7 @@ function LSP:Initialize()
     hook.Run("LS+.DLCsLoaded")
 
     // Shared Loading
-    for _, file in ipairs(file.Find("lightsaberplus/shared/*", "LUA", "nameasc")) do
+    for _, file in ipairs(file.Find("lightsaberplus/shared/*", "LUA")) do
         if SERVER then
             AddCSLuaFile("lightsaberplus/shared/"..file)
         end
@@ -47,13 +47,13 @@ function LSP:Initialize()
 
     // Serverside Loading
     if SERVER then
-        for _, filename in ipairs(file.Find("lightsaberplus/server/*", "LUA", "nameasc")) do
+        for _, filename in ipairs(file.Find("lightsaberplus/server/*", "LUA")) do
             include("lightsaberplus/server/"..filename)
         end
     end
 
     // Clientside Loading
-    for _, file in ipairs(file.Find("lightsaberplus/client/*", "LUA", "nameasc")) do
+    for _, file in ipairs(file.Find("lightsaberplus/client/*", "LUA")) do
         if SERVER then
              AddCSLuaFile("lightsaberplus/client/"..file)
         else
@@ -151,11 +151,10 @@ end)
 
 hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
 
-	local gm = gmod.GetGamemode()
 
-	if gm.Name == "Sandbox" then
-		LSP.Config.MaxForce["1001"] = 100000
-		LSP.Config.TeamForcePowers["1001"] = {
+	if GAMEMODE.Name == "Sandbox" then
+		LSP.Config.MaxForce[1001] = 100000
+		LSP.Config.TeamForcePowers[1001] = {
 			["*"] = true
 		}
 	elseif DarkRP then
@@ -165,3 +164,6 @@ hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
 	end
 
 end)
+
+
+if true then LSP:Initialize() end

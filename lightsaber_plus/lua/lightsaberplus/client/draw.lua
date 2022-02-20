@@ -59,14 +59,14 @@ hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	end
 end)
 
-hook.Add("HUDPaint", "20j8i34rt", function()
-	if isDebugging then
-		for k,v in pairs(customDebugLines) do
-			local p = v.start:ToScreen()
-			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
-		end
-	end
-end)
+--hook.Add("HUDPaint", "20j8i34rt", function()
+--	if isDebugging then
+--		for k,v in pairs(customDebugLines) do
+--			local p = v.start:ToScreen()
+--			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
+--		end
+--	end
+--end)
 
 local drawnBlades = {}
 
@@ -417,14 +417,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	end
 	-------------------------
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	if wep:getsyncLightsaberPlusData("saberOn") then
 		doSounds(ply, name, pos)
 		drawSlice(ply, name, pos, ang, len)

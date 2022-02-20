@@ -165,7 +165,7 @@ hook.Add("Think", "CL_Secondperson_44Bonesz", function()
 	if LSP.Config.KillViewMods then return end
 	local ply = LocalPlayer()
 	local wep = ply:GetActiveWeapon()
-	if (IsValid(ply:GetActiveWeapon()) && holdTypes[wep:GetHoldType()] && (wep.isLightsaberPlus)  && (!LIGHTSABER_PLUS_THIRDPERSON) ) or (is3p) then
+	if (IsValid(wep) && holdTypes[wep:GetHoldType()] && (wep.isLightsaberPlus)  && (!LIGHTSABER_PLUS_THIRDPERSON) ) or (is3p) then
 		for _, bone in pairs(removeBones) do
 			if (ply:LookupBone(bone)) then
 				ply:ManipulateBoneScale(ply:LookupBone(bone), Vector()*0)
