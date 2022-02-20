@@ -59,14 +59,14 @@ hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	end
 end)
 
---hook.Add("HUDPaint", "20j8i34rt", function()
---	if isDebugging then
---		for k,v in pairs(customDebugLines) do
---			local p = v.start:ToScreen()
---			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
---		end
---	end
---end)
+hook.Add("HUDPaint", "20j8i34rt", function()
+	if isDebugging then
+		for k,v in pairs(customDebugLines) do
+			local p = v.start:ToScreen()
+			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
+		end
+	end
+end)
 
 local drawnBlades = {}
 
@@ -235,7 +235,8 @@ function searchAttachments(ply, wep, saber, left)
 						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Forward(), 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
 					end
 					drawBlade(item, wep, ply, drawID, blade.Pos, blade.Ang, 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
-					local bang = blade.Ang:RotateAroundAxis(blade.Ang:Right(), -90)
+					local bang = blade.Ang:RotateAroundAxis(blade.Ang:Right(), -90)  -- unused
+
 					runSaberTrace(ply, drawID, blade.Pos, blade.Ang, id)
 				else
 					drawBlade(item, wep, ply, drawID, blade.Pos, blade.Ang, 0, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
@@ -256,12 +257,14 @@ function searchAttachments(ply, wep, saber, left)
 				qVec2 = ply:GetActiveWeapon():getsyncLightsaberPlusData("OFFHAND-quillonInner"..id, Vector(255,255,255))
 			end
 			
-			if qVec != Vector(999,999,999) then
+			if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) then -- ne hier das and
 				local quillonClass = wep:getsyncLightsaberPlusData("quillonItem"..id, "")
 				local item = LSP.GetItem(quillonClass)
-				
+
+				runSaberTrace(ply, id, blade.Pos, blade.Ang, id, 4, 1)
+
 				-- third arg is quillon length
-				drawQuillion(blade.Pos, blade.Ang, 4, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item)
+				drawQuillion(blade.Pos, blade.Ang, 4, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item, id, ply)
 				
 				if item then
 					if item.effect then
@@ -427,14 +430,48 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	
 end
 
-function drawQuillion(pos, ang, len, color, innerColor, item)
+function drawQuillion(pos, ang, len, color, innerColor, item, name, ply)
+	//render.SetMaterial(mat(item.glowMaterial))
+	//--render.DrawBeam( pos, pos + ang:Up() * -(len), 2, 1, 0, color )
+	//render.DrawBeam( pos, pos + ang:Forward() * (len), 2, 1, 0, color )
+	//render.SetMaterial(mat(item.bladeMaterial))
+	//--render.DrawBeam( pos, pos + ang:Up() * -(len-0.5), 0.75, 1, 0, innerColor )
+	//render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+	
+	-- The blade being drawn.
 	render.SetMaterial(mat(item.glowMaterial))
-	--render.DrawBeam( pos, pos + ang:Up() * -(len), 2, 1, 0, color )
 	render.DrawBeam( pos, pos + ang:Forward() * (len), 2, 1, 0, color )
-	render.SetMaterial(mat(item.bladeMaterial))
-	--render.DrawBeam( pos, pos + ang:Up() * -(len-0.5), 0.75, 1, 0, innerColor )
-	render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+	
+	if item.animatedBlade then
+		frameTurn = frameTurn or 0
+		if frameTurn <= CurTime() then
+			animatedFrame = animatedFrame + 1
+			if animatedFrame >= item.bladeFrames then animatedFrame = 1 end
+			frameTurn = CurTime() + 0.1
+		end
+		render.SetMaterial(mat("saberplussabers/blades/animated/" .. item.animatedBlade .. "_f" .. animatedFrame ..".png"))
+		render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+	else
+		render.SetMaterial(mat(item.bladeMaterial))
+		render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+	end
 
+	-- Animated Effects
+	if item.effectFrames then
+		sparkTurn = sparkTurn or 0
+		if sparkTurn <= CurTime() then
+			sparkFrame = sparkFrame + 1
+			if sparkFrame >= sparkMax then
+				sparkFrame = 1
+				sparkMax = item.effectfrequenzy and item.effectfrequenzy or math.random(90,220)
+			end
+			sparkTurn = CurTime() + 0.01
+		end
+		if sparkFrame < item.effectFrames then
+			render.SetMaterial(mat("saberplussabers/effects/animated/" .. item.animatedEffect .. "_f" .. sparkFrame ..".png"))
+			render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
+		end
+	end
 end
 
 hook.Add( "PostDrawTranslucentRenderables", "4222222222222222222222222222g", function(ply)

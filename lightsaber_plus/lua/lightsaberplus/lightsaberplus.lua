@@ -151,8 +151,8 @@ end)
 
 hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
 
-
-	if GAMEMODE.Name == "Sandbox" then
+	local gm = GM or GAMEMODE or {}
+	if gm.Name == "Sandbox" then
 		LSP.Config.MaxForce[1001] = 100000
 		LSP.Config.TeamForcePowers[1001] = {
 			["*"] = true

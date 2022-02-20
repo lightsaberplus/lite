@@ -1695,4 +1695,12 @@ LSP.AddItem("lightsaber_ziostguardian'slightsaber", {
 	isHilt = true
 })
 
+LSP.AddItem("lightsaber_kylo_ren", {
+	name = "Lightsaber Hilt: Kylo Ren",
+	mdl = "models/weapons/starwars/w_kr_hilt.mdl",
+	desc = "Standard Weapons",
+	class = "lightsaber_plus",
+	isHilt = true
+})
+
 end)
