@@ -130,7 +130,7 @@ function overrideAnimation()
 	function GAMEMODE:CalcMainActivity(ply, v)
 		--print("sadjajisjid")
 		if killed then return end
-		if not IsValid(ply:GetActiveWeapon()) then return end
+		if not IsValid(ply:GetActiveWeapon()) then return ACT_MP_STAND_IDLE, nil end
 		local wep = ply:GetActiveWeapon()
 		local len = v:Length2D()
 		self.animTime = self.animTime or 0
