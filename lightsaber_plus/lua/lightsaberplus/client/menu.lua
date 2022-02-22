@@ -31,9 +31,8 @@ function handleInventory(f, invPanel, inv)
 				bar:DockMargin(0,0,0,10)
 				bar.Paint = function(s,w,h)
 					surface.SetDrawColor(35,35,35,255)
-					
 					if item.rarity then
-						local rgb = LSP.Config.CinematicCam[item.rarity]
+						local rgb = LSP.Config.Raritys[item.rarity]
 						local r = (rgb.r + 1) / 10
 						local g = (rgb.g + 1) / 10
 						local b = (rgb.b + 1) / 10
@@ -43,8 +42,8 @@ function handleInventory(f, invPanel, inv)
 					surface.DrawRect(0,0,w,h)
 					
 					if item.rarity then
-						draw.DrawText(item.name, "xozziesNoodle2", w/2, ScreenScale(7), LSP.Config.CinematicCam[item.rarity], TEXT_ALIGN_CENTER)
-						draw.DrawText(item.rarity, "cooldude", w/2, 5, LSP.Config.CinematicCam[item.rarity], TEXT_ALIGN_CENTER)
+						draw.DrawText(item.name, "xozziesNoodle2", w/2, ScreenScale(7), LSP.Config.Raritys[item.rarity], TEXT_ALIGN_CENTER)
+						draw.DrawText(item.rarity, "cooldude", w/2, 5,LSP.Config.Raritys[item.rarity], TEXT_ALIGN_CENTER)
 					else
 						draw.DrawText(item.name, "xozziesNoodle", tickSize*5, ScreenScale(7), Color(255,255,255,255), TEXT_ALIGN_LEFT)
 					end
@@ -137,9 +136,13 @@ function handleInventory(f, invPanel, inv)
 end
 
 function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
-	if IsValid(SABER_CRAFTING_MENU) then
+	local ply = LocalPlayer()
+	if IsValid(SABER_CRAFTING_MENU) and (SABER_CRAFTING_MENU.l == left) then
 		handleInventory(SABER_CRAFTING_MENU, SABER_CRAFTING_MENU.inv, inv)
 		return
+	end
+	if SABER_CRAFTING_MENU then
+		SABER_CRAFTING_MENU:Remove()
 	end
 	local w,h = ScrW(), ScrH()
 	local ply = LocalPlayer()
@@ -152,6 +155,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	f:Center()
 	f:MakePopup()
 	f:ShowCloseButton(true)
+	f.l = left
 	SABER_CRAFTING_MENU = f
 	
 	f.OnRemove = function()
@@ -282,8 +286,6 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetSize(tickSize*4,tickSize*4)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
-				local ply = LocalPlayer()
-				local blade = saber:GetAttachment(att.id)
 				positions[id] = positions[id] or {x=0,y=0}
 				local pos = positions[id]
 				dropSlot:SetPos(pos.x, pos.y - tickSize*2)
@@ -324,8 +326,6 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetSize(tickSize*4,tickSize*4)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
-				local ply = LocalPlayer()
-				local blade = saber:GetAttachment(att.id)
 				positionsInner[id] = positionsInner[id] or {x=0,y=0}
 				local pos = positionsInner[id]
 				dropSlot:SetPos(pos.x, pos.y - tickSize*2)
@@ -363,8 +363,6 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetSize(tickSize*4,tickSize*4)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
-				local ply = LocalPlayer()
-				local blade = saber:GetAttachment(att.id)
 				positionsInner2[id] = positionsInner2[id] or {x=0,y=0}
 				local pos = positionsInner2[id]
 				dropSlot:SetPos(pos.x-lineLength, pos.y - tickSize*2)
@@ -405,8 +403,6 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetSize(tickSize*4,tickSize*4)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
-				local ply = LocalPlayer()
-				local blade = saber:GetAttachment(att.id)
 				positions2[id] = positions2[id] or {x=0,y=0}
 				local pos = positions2[id]
 				dropSlot:SetPos(pos.x - lineLength, pos.y - tickSize*2)

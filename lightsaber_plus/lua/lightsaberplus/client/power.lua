@@ -137,10 +137,6 @@ function innerPanel(p,s)
 	return x
 end
 
-
-
-
-
 local cachedLerps = {}
 local cachedMats = {}
 
@@ -179,9 +175,6 @@ function drawBar(color, x, y, w, h, mat)
 end
 
 local cachedMaterials = {}
-forcePowerMoveLeft =  forcePowerMoveLeft or nil
-forcePowerMoveRight = forcePowerMoveRight or nil
-forcePowerCast = forcePowerCast or nil
 
 surface.CreateFont( "buttonHeader", {
 	font = "Arial Black",
@@ -212,10 +205,6 @@ surface.CreateFont( "barFont", {
 	weight = 100,
 	antialias = true,
 } )
-
-
-
-
 
 bindMaker = bindMaker or nil
 function keyBindMaker()
@@ -358,19 +347,19 @@ hook.Add("Think", "j024tipmdfg2490iop", function()
 		if (leftFile) then
 			forcePowerMoveLeft = tonumber(leftFile)
 		else
-			forcePowerMoveLeft = KEY_F
+			forcePowerMoveLeft = LSP.Config.ForcePrev
 		end
 		local rightFile = file.Read( "saberplusKeybinds_Right.txt", "DATA" )
 		if (rightFile) then
 			forcePowerMoveRight = tonumber(rightFile)
 		else
-			forcePowerMoveRight = KEY_G
+			forcePowerMoveRight = LSP.Config.ForceNext
 		end
 		local castFile = file.Read( "saberplusKeybinds_Cast.txt", "DATA" )
 		if (castFile) then
 			forcePowerCast = tonumber(castFile)
 		else
-			forcePowerCast = MOUSE_RIGHT
+			forcePowerCast = LSP.Config.ForceCast
 		end
 		hasReadConfigs = true
 	end
@@ -408,106 +397,118 @@ hook.Add("Think", "j024tipmdfg2490iop", function()
 		end
 	end
 end)
-
+local emptyCheck = 0
+local isEmpty = true
 hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
-	local ply = LocalPlayer()
-	local sw,sh = ScrW(), ScrH()
+	if (LSP.Config.KillHud) then return end
+	local iconS = 50 -- Changing this higher will cause stretching and lowers the quality of the icons.
+	local padding = 5
+	local borderWidth = 2
 	
-	local size = 50
-	local padding = 8
+	local plateW = (iconS * LSP.Config.MaxForcePowers) + ((LSP.Config.MaxForcePowers+1) * padding)
+	local plateH = (padding*2)
 	
-	local totalSize = (size*LSP.Config.MaxForcePowers) + (padding*(LSP.Config.MaxForcePowers-1))
+	if emptyCheck <= CurTime() then
+		isEmpty = true
+		for slot,id in pairs(forcePowerLineUp) do
+			if !(id == "empty") then
+				isEmpty = false
+				break
+			end
+		end
+		emptyCheck = CurTime() + 5
+	end
 	
-	local hasPowers = false
+	if isEmpty then return end
 	
+	if LSP.Config.ForceHudTeam then
+		local teamColor = team.GetColor(LocalPlayer():Team())
+		surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b)
+	else
+		surface.SetDrawColor(177,17,17)
+	end
+	
+	surface.DrawRect(ScrW()/2 - plateW/2 -borderWidth, ScrH() - plateH- iconS-borderWidth, plateW+(borderWidth*2), plateH+ iconS+(borderWidth*2))
+
+	surface.SetDrawColor(17,17,17)
+	surface.DrawRect(ScrW()/2 - plateW/2, ScrH() - plateH - iconS, plateW, plateH+ iconS)
+	
+	cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] = cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] or Material("hfgjvs/torcom/proficiency-passive-border.png")
+	cachedMaterials["hfgjvs/torcom/item_grade_26.png"] = cachedMaterials["hfgjvs/torcom/item_grade_26.png"] or Material("hfgjvs/torcom/item_grade_26.png")
+	cachedMaterials["hfgjvs/torcom/utility-active-new.png"] = cachedMaterials["hfgjvs/torcom/utility-active-new.png"] or Material("hfgjvs/torcom/utility-active-new.png")
+	cachedMaterials["hfgjvs/torcom/item_grade_13.png"] = cachedMaterials["hfgjvs/torcom/item_grade_13.png"] or Material("hfgjvs/torcom/item_grade_13.png")
+	
+	local offset = 0
 	for i=1,LSP.Config.MaxForcePowers do
+		surface.SetDrawColor(255, 255, 255, 255)
 		if forcePowerLineUp[i] then
-			hasPowers = true
-			break
-		end
-	end
-	--print(hasPowers)
-	if hasPowers then
-		for i=1,LSP.Config.MaxForcePowers do
-			if selectedPower == i then
-				surface.SetDrawColor(177,5,5,255)
-			else
-				surface.SetDrawColor(55,55,55,255)
+			local power = getPower(forcePowerLineUp[i])
+			if power then
+				local mat = power.icon
+				cachedMaterials[mat] = cachedMaterials[mat] or Material(mat)
+				surface.SetMaterial(cachedMaterials[mat])
 			end
-			
-			surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1 - 2, sh-size-5 - 2, size+4, size+4)
-			if forcePowerLineUp[i] then
-				local powerData = getPower(forcePowerLineUp[i])
-				drawBar(Color(255,255,255,255), sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size, powerData.icon)
-				
-				powerCoolDowns[forcePowerLineUp[i]] = powerCoolDowns[forcePowerLineUp[i]] or 0
-				local delay = powerCoolDowns[forcePowerLineUp[i]]
-				
-				if delay > CurTime() then
-					surface.SetDrawColor(100,5,5,200)
-					surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size)
-				end
+		else
+			surface.SetMaterial(cachedMaterials["hfgjvs/torcom/item_grade_26.png"])
+		end
+		surface.DrawTexturedRect(ScrW()/2 - plateW/2 + padding + offset, ScrH() - plateH - iconS + padding, iconS, iconS)
+		if i == selectedPower then
+			surface.SetMaterial(cachedMaterials["hfgjvs/torcom/item_grade_13.png"])
+		else
+			surface.SetMaterial(cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"])
+		end
+		surface.DrawTexturedRect(ScrW()/2 - plateW/2 + padding + offset, ScrH() - plateH - iconS + padding, iconS, iconS)
+		if LSP.Config.ForcePointer then
+			if i == selectedPower then
+				surface.SetDrawColor(255,255,255, 255)
+				surface.SetMaterial(cachedMaterials["hfgjvs/torcom/utility-active-new.png"])
+				surface.DrawTexturedRect(ScrW()/2 - plateW/2 + padding + offset + iconS*0.1, ScrH() - plateH - iconS - iconS*0.4, iconS*0.8, iconS*0.8)
 			end
 		end
-	end
+		offset = offset + iconS + padding
+	end	
+	//local ply = LocalPlayer()
+	//local sw,sh = ScrW(), ScrH()
+	//local size = 50
+	//local padding = 8
+	//local totalSize = (size*LSP.Config.MaxForcePowers) + (padding*(LSP.Config.MaxForcePowers-1))
+	//local hasPowers = false
+	//for i=1,LSP.Config.MaxForcePowers do
+	//	if forcePowerLineUp[i] then
+	//		hasPowers = true
+	//		break
+	//	end
+	//end
+	//if hasPowers then
+	//	for i=1,LSP.Config.MaxForcePowers do
+	//		if selectedPower == i then
+	//			surface.SetDrawColor(177,5,5,255)
+	//		else
+	//			surface.SetDrawColor(55,55,55,255)
+	//		end
+//
+	//		surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1 - 2, sh-size-5 - 2, size+4, size+4)
+	//		if forcePowerLineUp[i] then
+	//			local powerData = getPower(forcePowerLineUp[i])
+	//			drawBar(Color(255,255,255,255), sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size, powerData.icon)
+//
+	//			powerCoolDowns[forcePowerLineUp[i]] = powerCoolDowns[forcePowerLineUp[i]] or 0
+	//			local delay = powerCoolDowns[forcePowerLineUp[i]]
+//
+	//			if delay > CurTime() then
+	//				surface.SetDrawColor(100,5,5,200)
+	//				surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size)
+	//			end
+	//		end
+	//	end
+	//end
 end)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-local themeColors = {}
 colors = {}
 
 function hex(hex)
-    hex = hex:gsub("#","")
+    local hex = hex:gsub("#","")
 	return Color(tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6)))
 end
 
@@ -666,11 +667,7 @@ function graphData(panel,payload,r)
 				surface.DrawPoly( polyGon2 )
 			end
 		end
-		
-		
-		
-		
-		
+
 		for i=1,ratio do
 			drawBox(w/ratio * i, 0, 1, h, colors.white(1))
 		end
@@ -977,115 +974,6 @@ function openNewForcePowerMenu()
 	local page = openNewPowers(f, true)
 end
 
-function openxPowers(f, tar)
-	local body = createScrollPanel(f,0,0,0,0,FILL)
-	local fw,fh = f:GetSize()
-	
-
-	local row = createPanel(body,0,0,0,fh*0.60,TOP)
-	row:DockMargin(0,0,0,0)
-	local rowCount = 2
-	local rw = fw-(10*((rowCount*2) +3))
-
-	local rowWid = rw*0.75
-	local gg = rowWid /10
-	local gg2 = rw /10
-	local pows = createBox("Force Powers", row,0,0,rowWid,0,LEFT,colors.foreground())
-	local det = createBox("Details", row,0,0,rw*0.25,0,LEFT,colors.foreground())
-	
-	local detailIcon =  vgui.Create( "DImage", det )
-	detailIcon:SetSize(rw*0.25,rw*0.25)
-	detailIcon:Dock(TOP)
-	detailIcon:SetImage("hfgjvs/torcom/logo-icon.png")
-	
-	local detailTitle =  vgui.Create( "DLabel", det )
-	detailTitle:SetText("LightsaberPlus")
-	detailTitle:SetFont("barTitleBold")
-	detailTitle:DockMargin(5,5,5,5)
-	detailTitle:SizeToContents()
-	detailTitle:Dock(TOP)
-	
-	local detailDesc =  vgui.Create( "RichText", det )
-	detailDesc:SetFontInternal("barTitleBold")
-	detailDesc:DockMargin(5,5,5,5)
-	detailDesc:Dock(FILL)
-	detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
-	
-	local powerList = vgui.Create("DPanelList", pows)
-	powerList:Dock(FILL)
-	powerList:EnableVerticalScrollbar(true)
-	powerList:EnableHorizontal(true)
-	powerList.Paint = function(me)
-		//draw.RoundedBox(8,0,0,me:GetWide(),me:GetTall(),Color(220,0,0,90))
-	end
-	
-	
-	local ply = LocalPlayer()
-	
-	local hasPowers = {}
-	local badPowers = {}
-	
-	for id,data in pairs(getAllPowers()) do
-
-		local b = vgui.Create("DButton", pows)
-		b:SetText("")
-		b:SetSize(gg,gg)
-		b.Power = id
-		
-		b.OnCursorEntered = function(me)
-			detailIcon:SetImage(data.icon)
-			detailTitle:SetText(id)
-			detailTitle:SizeToContents()
-			detailDesc:SetText(data.desc)
-		end
-		
-		b.OnCursorExited = function(me)
-			detailIcon:SetImage("hfgjvs/torcom/logo-icon.png")
-			detailTitle:SetText("LightsaberPlus")
-			detailTitle:SizeToContents()
-			detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
-		end
-
-		b.Paint = function(s,w,h)
-			surface.SetDrawColor(255,255,255)
-			if !(cachedMaterials[data.icon]) then
-				cachedMaterials[data.icon] = Material(data.icon) // sneaky optimization =3
-			end
-			surface.SetMaterial(cachedMaterials[data.icon])
-			surface.DrawTexturedRect(0,0,w,h)
-			if !tar:getChar():getData("power_"..id, false) then
-				surface.SetDrawColor(177,0,0,155)
-				surface.DrawRect(0,0,w,h)
-			end 
-		end
-		
-		b.DoClick = function()
-			net.Start("saberplus-grant-powers")
-				net.WriteEntity(tar)
-				net.WriteString(id)
-				net.WriteBool(!tar:getChar():getData("power_"..id, false))
-			net.SendToServer()
-		end
-		
-		powerList:AddItem(b)
-		
-	end
-
-
-	return body
-end
-
-function changePowers(tar)
-	local f = createFrame()
-	createNavBar(f)
-	createModal("Changes apply instantly and are logged.", f, colors.primary())
-	local page = openxPowers(f, tar)
-end
-
-net.Receive("saberplus-change-powers2", function()
-	local tar = net.ReadEntity()
-	changePowers(tar)
-end)
 
 concommand.Add("forcePowers", function()
 	 openNewForcePowerMenu()

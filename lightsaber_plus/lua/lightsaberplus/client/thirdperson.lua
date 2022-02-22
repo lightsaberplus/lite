@@ -45,7 +45,6 @@ local thirdpersonConflicted = true
 hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 	if LSP.Config.KillViewMods then return end
 	thirdpersonConflicted = false
-	local ply = LocalPlayer()
 	local wep = ply:GetActiveWeapon()
 	
 	if !IsValid(wep) then return end

@@ -1,44 +1,4 @@
-local lightningInner = Material("models/props_combine/tpballglow")
 isDebugging = false
-
-local newInnerBlade = Material("hydranew/innerBlade.png")
-local newInnerTip = Material("hydranew/innerTip.png")
-local newInnerBlade3k = Material("hydranew/innerBlade3k.png")
-local newInnerTip3k = Material("hydranew/innerTip3k.png")
-local newOuterBlade = Material("hydranew/outterBlade.png")
-local newOuterTip = Material("hydranew/outterTip.png")
-local newOuterUnder = Material("hydranew/outterUnder.png")
-local trailFadeLeft = Material("hydranew/trailFadeLeft.png")
-local trailFadeRight = Material("hydranew/trailFadeRight.png")
-local test = Material("hydranew/zwei.png")
-
-local glob = {
-	Material("hydranew/glob_f1.png"),
-	Material("hydranew/glob_f2.png"),
-	Material("hydranew/glob_f3.png"),
-	Material("hydranew/glob_f4.png"),
-	Material("hydranew/glob_f5.png"),
-	Material("hydranew/glob_f6.png"),
-}
-
-local unstable = {
-	Material("hydranew/unstable_f1.png"),
-	Material("hydranew/unstable_f2.png"),
-	Material("hydranew/unstable_f3.png"),
-	Material("hydranew/unstable_f4.png"),
-	Material("hydranew/unstable_f5.png"),
-	Material("hydranew/unstable_f6.png"),
-}
-
-local lightning = {
-	Material("hydranew/lightning_f1.png"),
-	Material("hydranew/lightning_f2.png"),
-	Material("hydranew/lightning_f3.png"),
-	Material("hydranew/lightning_f4.png"),
-	Material("hydranew/lightning_f5.png"),
-	Material("hydranew/lightning_f6.png"),
-}
-
 customDebugLines = {}
 
 hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
@@ -176,22 +136,9 @@ function handleLightsaber(saber, ply, wep, item, left)
 			saber:SetPos(ply.craftingLerpPosition)
 			saber:SetAngles(ply.craftingLerpAngle)
 		else
-			if item.isMelee then
-				local bone = ply:LookupBone("ValveBiped.Bip01_R_Hand") or 0
-				local pos, ang = ply:GetBonePosition(bone)
-				saber:SetParent(saber)
-				saber:RemoveEffects(EF_BONEMERGE)
-				saber:SetPos(pos + saber:GetRight() * item.posOffset.x + saber:GetForward() * item.posOffset.y + saber:GetUp() * item.posOffset.z)
-
-				ang:RotateAroundAxis(ang:Right(), item.angOffset.p)
-				ang:RotateAroundAxis(ang:Up(), item.angOffset.y)
-				ang:RotateAroundAxis(ang:Forward(), item.angOffset.r)
-				saber:SetAngles(ang)
-				doMeleeHitscan(ply, item)
-			else
-				saber:SetParent(ply)
-				saber:AddEffects(EF_BONEMERGE)
-			end
+			saber:SetParent(ply)
+			saber:AddEffects(EF_BONEMERGE)
+			hook.Run("LS+.HandleLS", item, ply, saber)
 		end
 	end
 end
@@ -235,7 +182,6 @@ function searchAttachments(ply, wep, saber, left)
 						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Forward(), 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
 					end
 					drawBlade(item, wep, ply, drawID, blade.Pos, blade.Ang, 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
-					local bang = blade.Ang:RotateAroundAxis(blade.Ang:Right(), -90)  -- unused
 
 					runSaberTrace(ply, drawID, blade.Pos, blade.Ang, id)
 				else
@@ -261,15 +207,13 @@ function searchAttachments(ply, wep, saber, left)
 				local quillonClass = wep:getsyncLightsaberPlusData("quillonItem"..id, "")
 				local item = LSP.GetItem(quillonClass)
 
-				runSaberTrace(ply, id, blade.Pos, blade.Ang, id, 4, 1)
-
-				-- third arg is quillon length
-				drawQuillion(blade.Pos, blade.Ang, 4, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item, id, ply)
-				
-				if item then
-					if item.effect then
-						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Up() * -1, 4, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
-					end
+				local len = 4
+				local override = hook.Run("LS+.DrawQuillon", blade.Pos, blade.Ang, len, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item, id, ply) or true
+				if override then
+					render.SetMaterial(mat(item.glowMaterial))
+					render.DrawBeam( blade.Pos, blade.Pos + blade.Ang:Forward() * (len), 2, 1, 0, Color(qVec.r, qVec.g, qVec.b) )
+					render.SetMaterial(mat(item.bladeMaterial))
+					render.DrawBeam( blade.Pos, blade.Pos + blade.Ang:Forward() * (len-0.5), 0.75, 1, 0, Color(qVec2.r, qVec2.g, qVec2.b) )
 				end
 			end
 		end
@@ -282,12 +226,6 @@ function hideSabers(ply, mode)
 	ply.rightHilt:SetNoDraw(mode)
 	ply.leftHilt:SetNoDraw(mode)
 end
-
-local frameTurn = 0
-local sparkTurn = 0
-local animatedFrame = 1
-local sparkFrame = 1
-local sparkMax = 30
 
 local cachedMats = {}
 
@@ -339,16 +277,8 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	render.SetMaterial(mat(item.glowMaterial))
 	render.DrawBeam( pos + ang:Up() * 1.5, pos + ang:Up() * -(len+1.5), thickness*3, 1, 0, color )
 	
-	if item.animatedBlade then
-		frameTurn = frameTurn or 0
-		if frameTurn <= CurTime() then
-			animatedFrame = animatedFrame + 1
-			if animatedFrame >= item.bladeFrames then animatedFrame = 1 end
-			frameTurn = CurTime() + 0.1
-		end
-		render.SetMaterial(mat("saberplussabers/blades/animated/" .. item.animatedBlade .. "_f" .. animatedFrame ..".png"))
-		render.DrawBeam( pos, pos + ang:Up() * -len, thickness, 1, 0, innerColor )
-	else
+	local override = hook.Run("LS+.AnimateBlade", item, pos, ang, len, thickness, innerColor) or true
+	if override then
 		render.SetMaterial(mat(item.bladeMaterial))
 		render.DrawBeam( pos, pos + ang:Up() * -len, thickness, 1, 0, innerColor )
 	end
@@ -374,26 +304,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	end
 	-------------------------
 	
-	
-	-- Animated Effects
-	if item.effectFrames then
-		sparkTurn = sparkTurn or 0
-		if sparkTurn <= CurTime() then
-			sparkFrame = sparkFrame + 1
-			if sparkFrame >= sparkMax then
-				sparkFrame = 1
-				sparkMax = item.effectfrequenzy and item.effectfrequenzy or math.random(90,220)
-			end
-			sparkTurn = CurTime() + 0.01
-		end
-		if sparkFrame < item.effectFrames then
-			render.SetMaterial(mat("saberplussabers/effects/animated/" .. item.animatedEffect .. "_f" .. sparkFrame ..".png"))
-			render.DrawBeam( pos, pos + ang:Up() * -len, thickness*2.5, 1, 0.01, innerColor )
-		end
-	end
-	-------------------------
-	
-	
+	hook.Run("LS+.EffectBlade", item, pos, ang, len, thickness, innerColor)
 	-- Dynamic Lighting
 	if wep:getsyncLightsaberPlusData("saberOn") or SABER_CRAFTING_MENU and tarLen > 1 then
 		local dlight = DynamicLight( ply:EntIndex() * 1000 * name )
@@ -430,49 +341,6 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	
 end
 
-function drawQuillion(pos, ang, len, color, innerColor, item, name, ply)
-	//render.SetMaterial(mat(item.glowMaterial))
-	//--render.DrawBeam( pos, pos + ang:Up() * -(len), 2, 1, 0, color )
-	//render.DrawBeam( pos, pos + ang:Forward() * (len), 2, 1, 0, color )
-	//render.SetMaterial(mat(item.bladeMaterial))
-	//--render.DrawBeam( pos, pos + ang:Up() * -(len-0.5), 0.75, 1, 0, innerColor )
-	//render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
-	
-	-- The blade being drawn.
-	render.SetMaterial(mat(item.glowMaterial))
-	render.DrawBeam( pos, pos + ang:Forward() * (len), 2, 1, 0, color )
-	
-	if item.animatedBlade then
-		frameTurn = frameTurn or 0
-		if frameTurn <= CurTime() then
-			animatedFrame = animatedFrame + 1
-			if animatedFrame >= item.bladeFrames then animatedFrame = 1 end
-			frameTurn = CurTime() + 0.1
-		end
-		render.SetMaterial(mat("saberplussabers/blades/animated/" .. item.animatedBlade .. "_f" .. animatedFrame ..".png"))
-		render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
-	else
-		render.SetMaterial(mat(item.bladeMaterial))
-		render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
-	end
-
-	-- Animated Effects
-	if item.effectFrames then
-		sparkTurn = sparkTurn or 0
-		if sparkTurn <= CurTime() then
-			sparkFrame = sparkFrame + 1
-			if sparkFrame >= sparkMax then
-				sparkFrame = 1
-				sparkMax = item.effectfrequenzy and item.effectfrequenzy or math.random(90,220)
-			end
-			sparkTurn = CurTime() + 0.01
-		end
-		if sparkFrame < item.effectFrames then
-			render.SetMaterial(mat("saberplussabers/effects/animated/" .. item.animatedEffect .. "_f" .. sparkFrame ..".png"))
-			render.DrawBeam( pos, pos + ang:Forward() * (len-0.5), 0.75, 1, 0, innerColor )
-		end
-	end
-end
 
 hook.Add( "PostDrawTranslucentRenderables", "4222222222222222222222222222g", function(ply)
 	if LSP.Config.DrawBlades then

@@ -1,5 +1,4 @@
 local meta = FindMetaTable("Player")
-local killed = false
 
 local fallingTranslation = {}
 
@@ -59,7 +58,6 @@ end
 function overrideAnimation()
 	function GAMEMODE:UpdateAnimation(ply, vel, speed)
 		
-		if killed then return end
 		local l = vel:Length()
 		local mv = 1
 		
@@ -128,11 +126,9 @@ function overrideAnimation()
 	end
 
 	function GAMEMODE:CalcMainActivity(ply, v)
-		--print("sadjajisjid")
-		if killed then return end
-		if not IsValid(ply:GetActiveWeapon()) then return end
-		local wep = ply:GetActiveWeapon()
-		local len = v:Length2D()
+		ply.m_bWasOnGround = ply:IsOnGround()
+		ply.m_bWasNoclipping = ( ply:GetMoveType() == MOVETYPE_NOCLIP && !ply:InVehicle() )
+
 		self.animTime = self.animTime or 0
 		
 		local fm = ply:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)
@@ -145,15 +141,20 @@ function overrideAnimation()
 		
 		ply.sequence = -1
 		
-		local len = v:Length2D()
-		if len > 155 then ply.mode = ACT_MP_RUN elseif len > 1 then ply.mode = ACT_MP_WALK end -- are we moving?
+		local len = v:Length2DSqr()
+		if len > 22500 then ply.mode = ACT_MP_RUN 
+		elseif len > 0.25 then ply.mode = ACT_MP_WALK 
+		end -- are we moving?
 		
 		if ply:getsyncLightsaberPlusData("isLimping", false) then
 			ply.sequence = ply:LookupSequence( "zombie_walk_02" )
 		end
 		
+		if not IsValid(ply:GetActiveWeapon()) then return ply.mode, ply.sequence end
+		local wep = ply:GetActiveWeapon()
+
 		if ( wep:getsyncLightsaberPlusData("saberOn") ) then
-			if ( len > 155 ) then
+			if ( len > 22500 ) then
 				ply.sequence = ply:LookupSequence( animType.run )
 			else
 				if len == 0 then
@@ -233,7 +234,6 @@ function overrideAnimation()
 			if ply:Crouching() then
 				ply.sequence = ply:LookupSequence("sit_zen")
 			else
-				local wep = ply:GetActiveWeapon()
 				if IsValid(wep) then
 					local holdType = fallingTranslation[wep:GetHoldType()] or "swimming_all"
 					ply.sequence = ply:LookupSequence(holdType)

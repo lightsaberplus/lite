@@ -296,13 +296,12 @@ net.Receive("saberplus-cast-power", function(len, ply)
 	local power = getPower(id) or false
 	if power and ply:Alive() then
 		local cost = power.cost
-		
 		local canUse = false
 		LSP.Config.TeamForcePowers[ply:Team()] = LSP.Config.TeamForcePowers[ply:Team()] or {}
 		if LSP.Config.TeamForcePowers[ply:Team()][id] or LSP.Config.TeamForcePowers[ply:Team()]["*"] then
 			canUse = true
 		end
-		
+
 		if canUse and (ply:getForce() >= cost) then
 			if ply:getCooldown(id) <= CurTime() then
 				ply:setCooldown(id, power.cooldown)
@@ -314,7 +313,7 @@ net.Receive("saberplus-cast-power", function(len, ply)
 	end
 end)
 
-hook.Add("LS+.ForcePowers", "LS+.NormalPowers", function()
+hook.Add("LS+.ForcePowers", "LS+.NormalPowerFunctions", function()
 	LSP.AddPowerFunction("Force Block",
 		function(ply)
 			local wep = ply:GetActiveWeapon()

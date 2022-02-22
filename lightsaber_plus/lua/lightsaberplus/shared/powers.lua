@@ -1,6 +1,5 @@
 local meta = FindMetaTable("Player")
 local forcePowers = {}
-local lastRegister = 0
 
 function meta:getForce()
 	if SERVER then

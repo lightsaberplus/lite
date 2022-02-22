@@ -194,24 +194,32 @@ function createQuickMenu()
 	end
 end
 
+//local open = false
 hook.Add("Think", "okpjdisfokgids", function()
 	if not IsValid(saberplusQuickMenu) then
 		createQuickMenu()
 	end
 end)
 
-hook.Add("OnContextMenuOpen", "jmoidsfgd", function()
+
+//hook.Add("SpawnMenuOpen", "LS+.OpenMenu", function()
+//	if LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "lightsaber_plus" then
+hook.Add("OnContextMenuOpen", "jmoidsfgd", function()	--
 	saberplusQuickMenu:Show()
 	saberplusQuickMenu:MakePopup()
+//		open = true
+//		return false
+//	end
 end)
 
-hook.Add("OnContextMenuClose", "jtyijrty", function()
+//hook.Add("PlayerButtonUp", "LS+.CloseMenu", function(ply,btn)
+//	if open and btn == "KEY_Q" then
+hook.Add("OnContextMenuClose", "jtyijrty", function()	--
 	saberplusQuickMenu:Hide()
 	saberplusQuickMenu:SetMouseInputEnabled(false)
+//		open = false
+//	end
 end)
-
-
-
 
 surface.CreateFont( "xpbarFont", {
 	font = "Trebuchet MS",
