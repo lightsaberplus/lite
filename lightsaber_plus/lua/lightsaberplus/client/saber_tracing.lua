@@ -4,12 +4,11 @@ function runSaberTrace(ply, bladeID, pos, ang, id, length, segments)
 	local bladeLength = length or 35
 	local segments = segments or LSP.Config.HitScanSegments
 	local dist = bladeLength / segments
-	
+
 	ply.bladePos = ply.bladePos or {}
 	for i=0,segments do
 		local scanID = bladeID..i
 		ply.bladePos[scanID] = ply.bladePos[scanID] or {}
-		local segmentLength = (bladeLength/i)				-- unused wtf
 		local endPos = pos + ang:Forward() * (dist*i)
 		if isDebugging then
 			local customDebug = {}

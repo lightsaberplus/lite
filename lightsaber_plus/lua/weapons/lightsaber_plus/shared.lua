@@ -1,6 +1,6 @@
-SWEP.PrintName = "Lightsaber"
-SWEP.Author = "Lord Tyler & NetFl3xx"
-SWEP.Category = "LightsaberPlus"
+SWEP.PrintName = "Base Lightsaber"
+SWEP.Author = "Lightsaber ++"
+SWEP.Category = "Lightsaber ++"
 
 SWEP.Slot = 0
 SWEP.SlotPos = 1

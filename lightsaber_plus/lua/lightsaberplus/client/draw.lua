@@ -182,7 +182,8 @@ function searchAttachments(ply, wep, saber, left)
 						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Forward(), 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
 					end
 					drawBlade(item, wep, ply, drawID, blade.Pos, blade.Ang, 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
-
+					-- turns the angle to align it to the blade being drawn so we scan the right places
+					blade.Ang:RotateAroundAxis(blade.Ang:Right(), -90)
 					runSaberTrace(ply, drawID, blade.Pos, blade.Ang, id)
 				else
 					drawBlade(item, wep, ply, drawID, blade.Pos, blade.Ang, 0, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
@@ -208,7 +209,7 @@ function searchAttachments(ply, wep, saber, left)
 				local item = LSP.GetItem(quillonClass)
 
 				local len = 4
-				local override = hook.Run("LS+.DrawQuillon", blade.Pos, blade.Ang, len, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item, id, ply) or true
+				local override = hook.Run("LS+.DrawQuillon", blade.Pos, blade.Ang, len, Color(qVec.r, qVec.g, qVec.b),  Color(qVec2.r, qVec2.g, qVec2.b), item, id + 20, ply) or true
 				if override then
 					render.SetMaterial(mat(item.glowMaterial))
 					render.DrawBeam( blade.Pos, blade.Pos + blade.Ang:Forward() * (len), 2, 1, 0, Color(qVec.r, qVec.g, qVec.b) )

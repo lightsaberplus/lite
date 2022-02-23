@@ -15,9 +15,3 @@ function meta:networkAnim(s,r,t)
 		net.WriteFloat(t or 1)
 	net.Broadcast()
 end
-
-//concommand.Add("getBones", function(ply,cmd,args)
-//    for i=0,ply:GetBoneCount() do
-//        print(ply:GetBoneName(i))
-//    end
-//end)

@@ -310,7 +310,7 @@ function SWEP:Reload()
 				self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_on.mp3")
 			end
 		end
-		self.noSpam = CurTime() + 1
+		self.noSpam = CurTime() + 0.5
 	end
 end
 
