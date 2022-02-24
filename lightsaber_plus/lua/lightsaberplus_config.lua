@@ -35,10 +35,6 @@ return {//Dont delete this line
     FaceOnBlock = false,                    -- When you block a shot, should we face the target? (the answer is no, its ass, but ur choice.)
     Block360 = true,                        -- Can we block 360 degrees?
 
-    --isnt used?
-    DefaultDMG = 100,                       -- Default saber damage.
--- premium prob
-
     BlockPerc = 0.1,                        -- incomingDamage * LSP.Config.BlockPerc = newDamage
     RegenDelay = 10,                        -- 60s is recommended
     CombatBlock = false,                    -- If both players are attacking, we block (like the movies) makes for a shitty fight.
@@ -59,9 +55,7 @@ return {//Dont delete this line
 
     -- Cosmetics
     SaberTrail = true,
-
     SaberTrailSpeed = 20,
--- premium or unused
 
     ForceHudTeam = true,                    -- Team Colors on the outline of the force power hud.
     ForcePointer = true,                    -- should the plumbob exist.

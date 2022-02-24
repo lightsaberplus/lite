@@ -10,23 +10,14 @@ function runSaberTrace(ply, bladeID, pos, ang, id, length, segments)
 		local scanID = bladeID..i
 		ply.bladePos[scanID] = ply.bladePos[scanID] or {}
 		local endPos = pos + ang:Forward() * (dist*i)
-		if isDebugging then
-			local customDebug = {}
-			customDebug.start = endPos
-			customDebug.endpos = ply.bladePos[scanID].lastPos
-			customDebug.life = CurTime() + 0.5
-			customDebug.color = Color(i*(255/segments),0,250 - i*(255/segments),255)
-			table.insert(customDebugLines, customDebug)
-		end
+
+		LSP.AddDebugLines(endPos, ply.bladePos[scanID].lastPos, Color(i*(255/segments),0,250 - i*(255/segments),255))
+
 		if ply.bladePos[scanID].lastPos then
 			local tr = util.TraceLine({
 				start = endPos,
 				endpos = ply.bladePos[scanID].lastPos,
-				filter = function(ent)
-					if ent == self then return false end
-					if ent == ply then return false end
-					return true
-				end
+				filter = {ply}
 			})
 			if IsValid(tr.Entity) then
 				if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsVehicle() or tr.Entity.LFS or tr.Entity:GetClass() == "training_droid" then
@@ -39,14 +30,9 @@ function runSaberTrace(ply, bladeID, pos, ang, id, length, segments)
 								net.WriteVector(tr.HitPos)
 								net.WriteInt(id,32)
 							net.SendToServer()
-							if isDebugging then
-								local customDebug = {}
-								customDebug.start = endPos
-								customDebug.endpos = ply.bladePos[scanID].lastPos
-								customDebug.life = CurTime() + 0.5
-								customDebug.color = Color(255,255,0)
-								table.insert(customDebugLines, customDebug)
-							end
+
+							LSP.AddDebugLines(endPos, ply.bladePos[scanID].lastPos, Color(255,255,0))
+
 							tr.Entity.lastHit = CurTime() + 0.25
 						end
 					end

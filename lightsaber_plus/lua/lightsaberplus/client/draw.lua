@@ -1,6 +1,15 @@
-isDebugging = false
-customDebugLines = {}
-
+local customDebugLines = {}
+local isDebugging = true
+function LSP.AddDebugLines(startp, endp, col)
+	if isDebugging then
+		local customDebug = {}
+		customDebug.start = startp
+		customDebug.endpos = endp
+		customDebug.life = CurTime() + 0.5
+		customDebug.color = col or Color(255,255,0,50)
+		table.insert(customDebugLines, customDebug)
+	end
+end
 hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	if isDebugging then
 		for k,v in pairs(customDebugLines) do
@@ -46,19 +55,11 @@ end)
 function drawSlice(ply, blade, pos, ang, len)
 	local tr = util.TraceLine( {
 		start = pos,
-		endpos = pos + ang:Up() * -len,
-		filter = function() return false end
+		endpos = pos + ang:Up() * -len
 	})
 
-	if isDebugging then
-		local customDebug = {}
-		customDebug.start = pos
-		customDebug.endpos = tr.HitPos
-		customDebug.life = CurTime() + 0.5
-		customDebug.color = Color(255,255,0,50)
-		table.insert(customDebugLines, customDebug)
-	end
-	
+	LSP.AddDebugLines(pos, tr.HitPos)
+
 	if util.IsInWorld(tr.HitPos + tr.Normal:Angle():Up() * -3) then
 		ply.lastSlice = ply.lastSlice or {}
 		ply.lastSlice[blade] = ply.lastSlice[blade] or Vector(0,0,-99999999)
