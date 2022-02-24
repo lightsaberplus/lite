@@ -5,7 +5,7 @@ function LSP.AddDebugLines(startp, endp, col)
 		local customDebug = {}
 		customDebug.start = startp
 		customDebug.endpos = endp
-		customDebug.life = CurTime() + 0.5
+		customDebug.life = CurTime() + 1
 		customDebug.color = col or Color(255,255,0,50)
 		table.insert(customDebugLines, customDebug)
 	end

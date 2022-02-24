@@ -397,6 +397,11 @@ hook.Add("Think", "j024tipmdfg2490iop", function()
 		end
 	end
 end)
+
+cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] = cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] or Material("hfgjvs/torcom/proficiency-passive-border.png")
+cachedMaterials["hfgjvs/torcom/item_grade_26.png"] = cachedMaterials["hfgjvs/torcom/item_grade_26.png"] or Material("hfgjvs/torcom/item_grade_26.png")
+cachedMaterials["hfgjvs/torcom/utility-active-new.png"] = cachedMaterials["hfgjvs/torcom/utility-active-new.png"] or Material("hfgjvs/torcom/utility-active-new.png")
+cachedMaterials["hfgjvs/torcom/item_grade_13.png"] = cachedMaterials["hfgjvs/torcom/item_grade_13.png"] or Material("hfgjvs/torcom/item_grade_13.png")
 local emptyCheck = 0
 local isEmpty = true
 hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
@@ -433,11 +438,6 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 	surface.SetDrawColor(17,17,17)
 	surface.DrawRect(ScrW()/2 - plateW/2, ScrH() - plateH - iconS, plateW, plateH+ iconS)
 	
-	cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] = cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"] or Material("hfgjvs/torcom/proficiency-passive-border.png")
-	cachedMaterials["hfgjvs/torcom/item_grade_26.png"] = cachedMaterials["hfgjvs/torcom/item_grade_26.png"] or Material("hfgjvs/torcom/item_grade_26.png")
-	cachedMaterials["hfgjvs/torcom/utility-active-new.png"] = cachedMaterials["hfgjvs/torcom/utility-active-new.png"] or Material("hfgjvs/torcom/utility-active-new.png")
-	cachedMaterials["hfgjvs/torcom/item_grade_13.png"] = cachedMaterials["hfgjvs/torcom/item_grade_13.png"] or Material("hfgjvs/torcom/item_grade_13.png")
-	
 	local offset = 0
 	for i=1,LSP.Config.MaxForcePowers do
 		surface.SetDrawColor(255, 255, 255, 255)
@@ -458,6 +458,14 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 			surface.SetMaterial(cachedMaterials["hfgjvs/torcom/proficiency-passive-border.png"])
 		end
 		surface.DrawTexturedRect(ScrW()/2 - plateW/2 + padding + offset, ScrH() - plateH - iconS + padding, iconS, iconS)
+
+		if forcePowerLineUp[i] then
+			powerCoolDowns[forcePowerLineUp[i]] = powerCoolDowns[forcePowerLineUp[i]] or 0
+			if powerCoolDowns[forcePowerLineUp[i]] > CurTime() then
+				surface.SetDrawColor(100,5,5,200)
+				surface.DrawRect(ScrW()/2 - plateW/2 + padding + offset, ScrH() - plateH - iconS + padding, iconS, iconS)
+			end
+		end
 		if LSP.Config.ForcePointer then
 			if i == selectedPower then
 				surface.SetDrawColor(255,255,255, 255)
