@@ -1,5 +1,5 @@
 local customDebugLines = {}
-local isDebugging = true
+local isDebugging = false
 function LSP.AddDebugLines(startp, endp, col)
 	if isDebugging then
 		local customDebug = {}

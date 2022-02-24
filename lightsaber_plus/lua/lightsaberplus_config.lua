@@ -66,7 +66,6 @@ return {//Dont delete this line
     HitNumbers = true,                      -- Should we draw hit numbers?
     KillHud = false,                        -- Should we stop the HUD?
     KillSounds = false,                     -- Should we kill the sound engine
-    KillViewMods = false,                   -- Should we turn off the view mods.
     KillDamageMod = false,                  -- Should we not determine the damage?
     CinematicCam = false,
 
@@ -77,6 +76,7 @@ return {//Dont delete this line
     MaxForcePowers = 10,
 
     -- // Third Person Settings
+    EnableThirdPersonSys = false,           -- Better First and ThirdPerson if you have a Lightsaber as current Weapon
     FirstPersonRealism = false,             -- Pitch & Yaw are determined by the playermodel.
     FirstPersonRealismLite = false,         -- Only the yaw is determined by the playermodel.
     FirstPersonRealismSmooth = false        -- Adds smoothing to the above to make less jitter.

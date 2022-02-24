@@ -9,7 +9,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	
+
 end
 
 function SWEP:DrawWorldModel()

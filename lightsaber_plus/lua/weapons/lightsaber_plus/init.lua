@@ -245,9 +245,7 @@ end
 function SWEP:Initialize()
 	self:SetWeaponHoldType( "normal" )
 	self:SetHoldType( "normal" )
-	
-	self:SetWeaponHoldType( "normal" )
-	self:SetHoldType( "normal" )
+
 	self:syncLightsaberPlusData("saberOn", false)
 	
 	timer.Simple(0, function()
@@ -278,9 +276,6 @@ function SWEP:Initialize()
 			
 		end
 	end)
-	
-	self:syncLightsaberPlusData("saberOn", false)
-	
 end
 
 function SWEP:Reload()

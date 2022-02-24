@@ -570,9 +570,6 @@ net.Receive("saberplus-ping-inv-upd", function()
 end)
 
 
-
-
-
 function formSelection()
 	local w,h = ScrW()*0.3, ScrH()*0.75
 	local f = vgui.Create("DFrame")

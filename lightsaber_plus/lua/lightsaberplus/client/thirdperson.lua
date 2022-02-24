@@ -25,7 +25,7 @@ local holdTypes = {
 	camera 		= {up = 3, forward = 8, right = 2},
 }
 
-LIGHTSABER_PLUS_THIRDPERSON = true
+local thirdperson = false
 LIGHTSABER_PLUS_3P_LROFF = 0
 LIGHTSABER_PLUS_3P_FWOFF = 125
 LIGHTSABER_PLUS_3P_UDOFF = 0
@@ -33,18 +33,13 @@ LIGHTSABER_PLUS_3P_ANGOFF = 0
 
 local headPos = Vector(0,0,0)
 local headAng = Angle(0,0,0)
-local is3p = false
 
 local eyesLerp = Angle(0,0,0)
 
 local stPos = Vector(0,0,-9999)
 local stAng = Angle(0,0,0)
 
-local thirdpersonConflicted = true
-
 hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
-	if LSP.Config.KillViewMods then return end
-	thirdpersonConflicted = false
 	local wep = ply:GetActiveWeapon()
 	
 	if !IsValid(wep) then return end
@@ -81,90 +76,86 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 		headPos = LerpVector(FrameTime()*speed, headPos, saberPos)
 		headAng = LerpAngle(FrameTime()*speed, headAng, saberAng)
 		
-		view = {
+		return {
 			origin = headPos,
 			angles = headAng,
 			fov = 74,
 			drawviewer = true
 		}
-		return view
 	else
-		local holdType = wep:GetHoldType()
-		
-		if !(holdTypes[holdType]) then return end
-		if !(wep.isLightsaberPlus or !is3p) then return end
-		
-		local eyes = {Pos = ply:GetPos() + Vector(0,0,48)} -- its a fix i guess..
+		if LSP.Config.EnableThirdPersonSys then
+			local holdType = wep:GetHoldType()
+			
+			if !(holdTypes[holdType]) then return end
+			if !(wep.isLightsaberPlus) then return end
+			
+			local eyes = {Pos = ply:GetPos() + Vector(-5,10,55)}	-- edited 
 
-		local up = holdTypes[holdType].up
-		local forward = holdTypes[holdType].forward
-		local right = holdTypes[holdType].right
-		
-		if LIGHTSABER_PLUS_THIRDPERSON then
-			if headPos == Vector(0,0,0) then headPos = eyes.Pos end
-			if headAng == Angle(0,0,0) then headAng = ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0) end
-			local backTrace = util.QuickTrace( eyes.Pos, ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + ply:GetForward() * -(LIGHTSABER_PLUS_3P_FWOFF+20) + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF), ents.GetAll())
-			local perc = backTrace.Fraction
+			local up = holdTypes[holdType].up
+			local forward = holdTypes[holdType].forward
+			local right = holdTypes[holdType].right
 			
-			local amt = -LIGHTSABER_PLUS_3P_FWOFF * perc
-			local additionSpeed = 0
-			if util.IsInWorld(headPos) then
-				headPos = backTrace.HitPos
-			end
-			
-			if LSP.Config.CinematicCam then
-				headPos = LerpVector(FrameTime()*4, headPos, eyes.Pos + ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + Vector(0,0,10 - math.Clamp(perc*10,0,3)) + ang:Forward() * amt + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF))
-				headAng = LerpAngle(FrameTime()*6, headAng, ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0))
+			if thirdperson then
+				if headPos == Vector(0,0,0) then headPos = eyes.Pos end
+				if headAng == Angle(0,0,0) then headAng = ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0) end
+				local backTrace = util.QuickTrace( eyes.Pos, ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + ply:GetForward() * -(LIGHTSABER_PLUS_3P_FWOFF+20) + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF), ents.GetAll())
+				local perc = backTrace.Fraction
+
+				local amt = -LIGHTSABER_PLUS_3P_FWOFF * perc
+				local additionSpeed = 0
+				if util.IsInWorld(headPos) then
+					headPos = backTrace.HitPos
+				end
+
+				if LSP.Config.CinematicCam then
+					headPos = LerpVector(FrameTime()*4, headPos, eyes.Pos + ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + Vector(0,0,10 - math.Clamp(perc*10,0,3)) + ang:Forward() * amt + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF))
+					headAng = LerpAngle(FrameTime()*6, headAng, ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0))
+				else
+					headPos = LerpVector(FrameTime()*20, headPos, eyes.Pos + ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + Vector(0,0,10 - math.Clamp(perc*10,0,3)) + ang:Forward() * amt + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF))
+					headAng = LerpAngle(FrameTime()*25, headAng, ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0))
+				end
+
+				return {
+					origin = headPos,
+					angles = headAng,
+					fov = 74,
+					drawviewer = true
+				}
 			else
-				headPos = LerpVector(FrameTime()*20, headPos, eyes.Pos + ply:GetRight() * LIGHTSABER_PLUS_3P_LROFF + Vector(0,0,10 - math.Clamp(perc*10,0,3)) + ang:Forward() * amt + Vector(0,0,LIGHTSABER_PLUS_3P_UDOFF))
-				headAng = LerpAngle(FrameTime()*25, headAng, ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0))
-			end
-			
-			--headPos = stPos
-			--headAng = Angle(ang.p,ang.y,0)
+				local view = {
+					origin = eyes.Pos+(ply:GetUp()*up)+(ply:GetForward()*forward)+(ply:GetRight()*right),
+					angles = ang,
+					fov = 95,
+					drawviewer = true
+				}
 
-			view = {
-				origin = headPos,
-				angles = headAng,
-				fov = 74,
-				drawviewer = true
-			}
-			return view
-		else
-			local view = {
-				origin = eyes.Pos+(ply:GetUp()*up)-(ply:GetForward()*forward)+(ply:GetRight()*right),
-				angles = ang,
-				fov = 95,
-				drawviewer = true
-			}
-			
-			if LSP.Config.FirstPersonRealism then
-				if LSP.Config.FirstPersonRealismSmoothed then
-					eyesLerp = LerpAngle(FrameTime() * 15, eyesLerp, Angle(eyes.Ang.p, eyes.Ang.y, 0))
-				else
-					eyesLerp = Angle(eyes.Ang.p, eyes.Ang.y, 0)
+				if LSP.Config.FirstPersonRealism then
+					if LSP.Config.FirstPersonRealismSmoothed then
+						eyesLerp = LerpAngle(FrameTime() * 15, eyesLerp, Angle(eyes.Ang.p, eyes.Ang.y, 0))
+					else
+						eyesLerp = Angle(eyes.Ang.p, eyes.Ang.y, 0)
+					end
+					view.angles = eyesLerp
 				end
-				view.angles = eyesLerp
-			end
-			if LSP.Config.FirstPersonRealismLite then
-				if LSP.Config.FirstPersonRealismSmoothed then
-					eyesLerp = LerpAngle(FrameTime() * 15, eyesLerp, Angle(ang.p, eyes.Ang.y, 0))
-				else
-					eyesLerp = Angle(ang.p, eyes.Ang.y, 0)
+				if LSP.Config.FirstPersonRealismLite then
+					if LSP.Config.FirstPersonRealismSmoothed then
+						eyesLerp = LerpAngle(FrameTime() * 15, eyesLerp, Angle(ang.p, eyes.Ang.y, 0))
+					else
+						eyesLerp = Angle(ang.p, eyes.Ang.y, 0)
+					end
+					view.angles = eyesLerp
 				end
-				view.angles = eyesLerp
+
+				return view
 			end
-			
-			return view
 		end
 	end
 end)
 
 hook.Add("Think", "CL_Secondperson_44Bonesz", function()
-	if LSP.Config.KillViewMods then return end
 	local ply = LocalPlayer()
 	local wep = ply:GetActiveWeapon()
-	if (IsValid(wep) && holdTypes[wep:GetHoldType()] && (wep.isLightsaberPlus)  && (!LIGHTSABER_PLUS_THIRDPERSON) ) or (is3p) then
+	if LSP.Config.EnableThirdPersonSys and (IsValid(wep) && holdTypes[wep:GetHoldType()] && (wep.isLightsaberPlus) && (!thirdperson) ) then
 		for _, bone in pairs(removeBones) do
 			if (ply:LookupBone(bone)) then
 				ply:ManipulateBoneScale(ply:LookupBone(bone), Vector()*0)
@@ -179,15 +170,6 @@ hook.Add("Think", "CL_Secondperson_44Bonesz", function()
 	end
 end)
 
-
-
 concommand.Add("toggleThirdperson", function()
-	is3p = !is3p
-	LIGHTSABER_PLUS_THIRDPERSON = !LIGHTSABER_PLUS_THIRDPERSON
-end)
-
-hook.Add("HUDPaint", "sdomirfgh", function()
-	if thirdpersonConflicted and not LSP.Config.KillViewMods then
-		draw.DrawText("Lightsaber+ has detected 'CalcView' override. Try removing any third person addons.", "TargetID", ScrW() * 0.5, ScrH() * 0.25, Color(255,5,5,255), TEXT_ALIGN_CENTER)
-	end
+	thirdperson = !thirdperson
 end)
