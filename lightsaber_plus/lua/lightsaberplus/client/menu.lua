@@ -7,7 +7,7 @@ local uiColor3 = Color(177,0,0) -- inner
 local uiColor4 = Color(177,0,177) -- quilloninner
 local boxSize = 2
 
-function handleInventory(f, invPanel, inv)
+function handleInventory(f, invPanel, inv, left)
 	invPanel:Remove()
 	
 	local panel = vgui.Create("DScrollPanel", f)
@@ -80,6 +80,7 @@ function handleInventory(f, invPanel, inv)
 					if self.isEquipped then
 						net.Start(self.mode)
 							net.WriteInt(self.id,32)
+							net.WriteBool(left)
 						net.SendToServer()
 						self:Remove()
 					end
@@ -126,6 +127,7 @@ function handleInventory(f, invPanel, inv)
 					if self.isEquipped then
 						net.Start(self.mode)
 							net.WriteInt(self.id,32)
+							net.WriteBool(left)
 						net.SendToServer()
 						self:Remove()
 					end
@@ -137,18 +139,12 @@ end
 
 function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	local ply = LocalPlayer()
-	if IsValid(SABER_CRAFTING_MENU) and (SABER_CRAFTING_MENU.l == left) then
-		handleInventory(SABER_CRAFTING_MENU, SABER_CRAFTING_MENU.inv, inv)
-		return
-	end
-	if SABER_CRAFTING_MENU then
+	if IsValid(SABER_CRAFTING_MENU) then
+		SABER_CRAFTING_MENU.OnRemove = nil
 		SABER_CRAFTING_MENU:Remove()
 	end
 	local w,h = ScrW(), ScrH()
-	local ply = LocalPlayer()
-	
-	local wep = ply:GetActiveWeapon()
-	
+
 	local f = vgui.Create("DFrame")
 	f:SetSize(w, h)
 	f:SetTitle("SABER CRAFTING MENU")
@@ -157,44 +153,16 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	f:ShowCloseButton(true)
 	f.l = left
 	SABER_CRAFTING_MENU = f
-	
+
 	f.OnRemove = function()
 		net.Start("saberplus-end-craft-anim")
 		net.SendToServer()
 	end
-	
-	local butt = vgui.Create("DButton", f)
-	butt:SetSize(256, 64)
-	if left then
-		butt:SetText("Swap to Main Hand")
-	else
-		butt:SetText("Swap to Off Hand")
-	end
-	butt:SetPos(w - 256 - 10, 64)
-	butt:SetFont("xozziesNoodle")
-	butt:SetTextColor(Color(255,255,255))
-	
-	butt.DoClick = function()
-		net.Start("saberplus-swap-lightsaber-menu")
-			net.WriteBool(!left)
-		net.SendToServer()
-	end
-	
-	butt.Paint = function(s,ww,hh)
-		surface.SetDrawColor(17,17,17,255)
-		surface.DrawRect(0,0,ww,hh)
-		
-		surface.SetDrawColor(177,0,0,255)
-		surface.DrawRect(0,0,ww,1)
-		surface.DrawRect(0,hh-1,ww,1)
-		
-		surface.DrawRect(0,0,1,hh)
-		surface.DrawRect(ww-1,0,1,hh)
-	end
-	
-	
+
+	hook.Run("SaberCrafter", f, w, h)
+
 	local saber = ply.rightHilt
-	
+
 	if left then
 		saber = ply.leftHilt
 		f.isLeft = true
@@ -216,22 +184,19 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 		surface.SetDrawColor(17,17,17,255)
 		surface.DrawRect(0,0,w,50)
 		surface.DrawRect(0,h-50,w,50)
-		local hasDrawn = false
 		local ply = LocalPlayer()
 		local pos = Vector(0,0,0)
 		for id,att in pairs(saber:GetAttachments() or {}) do
-			if  string.match( att.name, "blade(%d+)" ) then
+			if string.match( att.name, "blade(%d+)" ) then
 				
 				local blade = saber:GetAttachment(att.id)
 				local pos = blade.Pos:ToScreen()
 				
 				if IsValid(f.bladeSlots[id]) then
-					--if f.bladeSlots[id].isShowing then
-						surface.SetDrawColor(uiColor.r,uiColor.g,uiColor.b,255)
-						surface.DrawLine(pos.x, pos.y, pos.x + lineLength, pos.y - lineLength - linePadding)
-						surface.DrawLine(pos.x + lineLength, pos.y - lineLength - linePadding, pos.x + lineLength + lineLength, pos.y - lineLength - linePadding)
-						positions[id] = {x = pos.x + lineLength + lineLength, y = pos.y - lineLength - linePadding}
-					--end
+					surface.SetDrawColor(uiColor.r,uiColor.g,uiColor.b,255)
+					surface.DrawLine(pos.x, pos.y, pos.x + lineLength, pos.y - lineLength - linePadding)
+					surface.DrawLine(pos.x + lineLength, pos.y - lineLength - linePadding, pos.x + lineLength + lineLength, pos.y - lineLength - linePadding)
+					positions[id] = {x = pos.x + lineLength + lineLength, y = pos.y - lineLength - linePadding}
 				end
 				
 				surface.SetDrawColor(uiColor3.r,uiColor3.g,uiColor3.b,255)
@@ -240,12 +205,10 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 				
 				surface.SetDrawColor(uiColor.r,uiColor.g,uiColor.b,255)
 				surface.DrawRect(pos.x - tickSize/2, pos.y - tickSize/2, tickSize, tickSize)
-				
-				hasDrawn = true
 			end
 		end
 		for id,att in pairs(saber:GetAttachments() or {}) do
-			if  string.match( att.name, "quillon(%d+)" ) then
+			if string.match( att.name, "quillon(%d+)" ) then
 				local blade = saber:GetAttachment(att.id)
 				local pos = blade.Pos:ToScreen()
 				
@@ -262,24 +225,10 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 				
 				surface.SetDrawColor(uiColor2.r,uiColor2.g,uiColor2.b,255)
 				surface.DrawRect(pos.x - tickSize/4, pos.y - tickSize/4, tickSize/2, tickSize/2)
-				
-				hasDrawn = true
 			end
 		end
-		
-		--if !(hasDrawn) then
-			--local pos = blade.Pos:ToScreen()
-			--surface.SetDrawColor(uiColor.r,uiColor.g,uiColor.b,255)
-			--surface.DrawRect(pos.x, pos.y, tickSize, tickSize)
-			--surface.DrawLine(pos.x, pos.y, pos.x + lineLength, pos.y - lineLength)
-			--surface.DrawLine(pos.x + lineLength, pos.y - lineLength, pos.x + lineLength + lineLength, pos.y - lineLength)
-			--positions[1] = {x = pos.x + lineLength + lineLength, y = pos.y - lineLength}
-		--end
 	end
-	
 
-	
-	
 	for id,att in pairs(saber:GetAttachments() or {}) do
 		if string.match( att.name, "blade(%d+)" ) then
 			local dropSlot = vgui.Create("DPanel", f)
@@ -287,8 +236,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
 				positions[id] = positions[id] or {x=0,y=0}
-				local pos = positions[id]
-				dropSlot:SetPos(pos.x, pos.y - tickSize*2)
+				dropSlot:SetPos(positions[id].x, positions[id].y - tickSize*2)
 			end
 			
 			f.bladeSlots[id] = dropSlot
@@ -304,10 +252,12 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			
 			dropSlot:Receiver( 'crystalSlot', function(self, panels, isDropped, index, x, y)
 				if isDropped and !(panels[1].isEquipped) then
+					self:Clear()
 					panels[1]:SetParent(dropSlot)
 					net.Start("saberplus-crystal-drop-blade")
 						net.WriteString(panels[1].itemHash)
 						net.WriteInt(id,32)
+						net.WriteBool(left)
 					net.SendToServer()
 					
 					panels[1].mode = "saberplus-crystal-remove-blade"
@@ -327,8 +277,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
 				positionsInner[id] = positionsInner[id] or {x=0,y=0}
-				local pos = positionsInner[id]
-				dropSlot:SetPos(pos.x, pos.y - tickSize*2)
+				dropSlot:SetPos(positionsInner[id].x, positionsInner[id].y - tickSize*2)
 			end
 			
 			f.bladeInners[id] = dropSlot
@@ -344,10 +293,12 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			
 			dropSlot:Receiver( 'innerSlot', function(self, panels, isDropped, index, x, y)
 				if isDropped and !(panels[1].isEquipped) then
+					self:Clear()
 					panels[1]:SetParent(dropSlot)
 					net.Start("saberplus-crystal-drop-inner")
 						net.WriteString(panels[1].itemHash)
 						net.WriteInt(id,32)
+						net.WriteBool(left)
 					net.SendToServer()
 					
 					panels[1].mode = "saberplus-crystal-remove-inner"
@@ -364,8 +315,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
 				positionsInner2[id] = positionsInner2[id] or {x=0,y=0}
-				local pos = positionsInner2[id]
-				dropSlot:SetPos(pos.x-lineLength, pos.y - tickSize*2)
+				dropSlot:SetPos(positionsInner2[id].x-lineLength, positionsInner2[id].y - tickSize*2)
 			end
 			
 			f.quillonInners[id] = dropSlot
@@ -381,10 +331,12 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			
 			dropSlot:Receiver( 'innerSlot', function(self, panels, isDropped, index, x, y)
 				if isDropped and !(panels[1].isEquipped) then
+					self:Clear()
 					panels[1]:SetParent(dropSlot)
 					net.Start("saberplus-crystal-drop-inner-quillon")
 						net.WriteString(panels[1].itemHash)
 						net.WriteInt(id,32)
+						net.WriteBool(left)
 					net.SendToServer()
 					
 					panels[1].mode = "saberplus-crystal-remove-inner-quillon"
@@ -404,8 +356,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			dropSlot:SetPos(128,128)
 			dropSlot.Think = function(self)
 				positions2[id] = positions2[id] or {x=0,y=0}
-				local pos = positions2[id]
-				dropSlot:SetPos(pos.x - lineLength, pos.y - tickSize*2)
+				dropSlot:SetPos(positions2[id].x - lineLength, positions2[id].y - tickSize*2)
 			end
 			
 			f.quillionSlots[id] = dropSlot
@@ -421,10 +372,12 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 			
 			dropSlot:Receiver( 'crystalSlot', function(self, panels, isDropped, index, x, y)
 				if isDropped and !(panels[1].isEquipped) then
+					self:Clear()
 					panels[1]:SetParent(dropSlot)
 					net.Start("saberplus-crystal-drop-quillon")
 						net.WriteString(panels[1].itemHash)
 						net.WriteInt(id,32)
+						net.WriteBool(left)
 					net.SendToServer()
 					
 					panels[1].mode = "saberplus-crystal-remove-quillon"
@@ -448,10 +401,10 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	
 	f.inv = panel
 	
-	handleInventory(f, panel, inv)
+	handleInventory(f, panel, inv, left)
 
 	for blade,id in pairs(blades) do
-		if !(id == "") then
+		if id != "" then
 			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.bladeSlots[blade])
@@ -460,15 +413,17 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 				icon:Droppable("crystalSlot")
 				icon.isEquipped = true
 				fixModel(icon)
-				
+
 				icon.mode = "saberplus-crystal-remove-blade"
 				icon.id = blade
-				
+
 				icon.DoClick = function()
 					net.Start("saberplus-crystal-remove-blade")
 						net.WriteInt(blade,32)
+						net.WriteBool(left)
 					net.SendToServer()
-					net.Start("saberplus-ping-inv-upd")net.SendToServer()
+					net.Start("saberplus-ping-inv-upd")
+					net.SendToServer()
 					icon:Remove()
 				end
 			end
@@ -476,7 +431,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	end
 	
 	for blade,id in pairs(bladeInner) do
-		if !(id == "") then
+		if id != "" then
 			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.bladeInners[blade])
@@ -488,12 +443,14 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 
 				icon.mode = "saberplus-crystal-remove-inner"
 				icon.id = blade
-				
+
 				icon.DoClick = function()
 					net.Start("saberplus-crystal-remove-inner")
 						net.WriteInt(blade,32)
+						net.WriteBool(left)
 					net.SendToServer()
-					net.Start("saberplus-ping-inv-upd")net.SendToServer()
+					net.Start("saberplus-ping-inv-upd")
+					net.SendToServer()
 					icon:Remove()
 				end
 			end
@@ -501,7 +458,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	end
 	
 	for quillon,id in pairs(quillons) do
-		if !(id == "") then
+		if id != "" then
 			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.quillionSlots[quillon])
@@ -513,12 +470,14 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 
 				icon.mode = "saberplus-crystal-remove-quillon"
 				icon.id = quillon
-				
+
 				icon.DoClick = function()
 					net.Start("saberplus-crystal-remove-quillon")
 						net.WriteInt(quillon,32)
+						net.WriteBool(left)
 					net.SendToServer()
-					net.Start("saberplus-ping-inv-upd")net.SendToServer()
+					net.Start("saberplus-ping-inv-upd")
+					net.SendToServer()
 					icon:Remove()
 				end
 			end
@@ -526,7 +485,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 	end
 
 	for quillon,id in pairs(quillonInner) do
-		if !(id == "") then
+		if id != "" then
 			local item = LSP.GetItem(id)
 			if item then
 				local icon = vgui.Create( "DModelPanel", f.quillonInners[quillon])
@@ -535,38 +494,39 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
 				icon:Droppable("crystalSlot")
 				icon.isEquipped = true
 				fixModel(icon)
-				
+
 				icon.mode = "saberplus-crystal-remove-inner-quillon"
 				icon.id = quillon
-				
+
 				icon.DoClick = function()
 					net.Start("saberplus-crystal-remove-inner-quillon")
 						net.WriteInt(quillon,32)
+						net.WriteBool(left)
 					net.SendToServer()
 					
-					net.Start("saberplus-ping-inv-upd")net.SendToServer()
+					net.Start("saberplus-ping-inv-upd")
+					net.SendToServer()
 					
 					icon:Remove()
 				end
 			end
 		end
 	end
-	
 end
 
 net.Receive("saberplus-start-crystal-cuztom", function()
-	local inv = net.ReadTable()
-	local quillons = net.ReadTable()
-	local blades = net.ReadTable()
-	local bladesInner = net.ReadTable()
-	local quillonInner = net.ReadTable()
+	local inv = net.ReadCompressedTable()
+	local quillons = net.ReadCompressedTable()
+	local blades = net.ReadCompressedTable()
+	local bladesInner = net.ReadCompressedTable()
+	local quillonInner = net.ReadCompressedTable()
 	local left = net.ReadBool()
 	openSaberCrafter(inv, quillons, blades, bladesInner, quillonInner, left)
 end)
 
 net.Receive("saberplus-ping-inv-upd", function()
-	local inv = net.ReadTable()
-	handleInventory(SABER_CRAFTING_MENU, SABER_CRAFTING_MENU.inv, inv)
+	local inv = net.ReadCompressedTable()
+	handleInventory(SABER_CRAFTING_MENU, SABER_CRAFTING_MENU.inv, inv, SABER_CRAFTING_MENU.l)
 end)
 
 

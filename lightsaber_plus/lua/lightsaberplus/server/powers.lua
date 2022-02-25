@@ -96,7 +96,7 @@ function meta:Delay(t,s)
 		local w = self:GetActiveWeapon()
 		if !(s) then
 			w.atkTime = CurTime() + t
-			if w:GetClass() == "weapon_lightsaber" then
+			if w.isLightsaberPlus then
 				w:SetNextAttack( t )
 			end
 		else
@@ -317,7 +317,7 @@ hook.Add("LS+.ForcePowers", "LS+.NormalPowerFunctions", function()
 	LSP.AddPowerFunction("Force Block",
 		function(ply)
 			local wep = ply:GetActiveWeapon()
-			if wep:GetClass() == "lightsaber_plus" then
+			if wep.isLightsaberPlus then
 				local blockTime = 0.5
 				if !(wep:isUsable()) then return end
 				if not wep.isOn then

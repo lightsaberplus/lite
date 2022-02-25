@@ -80,27 +80,7 @@ end)
 
 
 hook.Add("HUDPaint", "soimjdfghdfgh", function()
-	if (LSP.Config.KillHud) then return end
-	--local ply = LocalPlayer()
-	
-	--local stm = ply:getsyncLightsaberPlusData("staminaPower", 0)
-	--local frc = ply:getForce()
-
-	--staminaLerp = Lerp(FrameTime()*8, staminaLerp, stm)
-	--forceLerp = Lerp(FrameTime()*8, forceLerp, frc)
-	
-	--LSP.Config.MaxForce[ply:Team()] = LSP.Config.MaxForce[ply:Team()] or 0
-	
-	--local stmPerc = staminaLerp / 100
-	--local frcPerc = forceLerp / LSP.Config.MaxForce[ply:Team()]
-	
-	--draw.RoundedBox( barHeight/2, 10, ScrH() * LSP.Config.HUDPerc, barLength, barHeight, Color(17,17,17,200))
-	--draw.RoundedBox( (barHeight-(subBarSize))/2, 10 + (subBarSize/2), ScrH() * LSP.Config.HUDPerc + (subBarSize/2), (barLength - subBarSize)*stmPerc, barHeight-subBarSize, Color(177,177,0))	
-	
-	--draw.RoundedBox( barHeight/2, 10, ScrH() * LSP.Config.HUDPerc - barHeight, barLength, barHeight, Color(17,17,17,200))
-	--draw.RoundedBox( (barHeight-(subBarSize))/2, 10 + (subBarSize/2), ScrH() * LSP.Config.HUDPerc + (subBarSize/2) - barHeight, (barLength - subBarSize)*frcPerc, barHeight-subBarSize, Color(200,50,255))	
-	
-	
+	if LSP.Config.KillHud then return end
 	if LSP.Config.HitNumbers then
 		animeNumbers()
 	end
@@ -110,13 +90,21 @@ saberplusQuickMenu = nil
 local buttonData = {}
 buttonData["Item List"] = 		{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("adminv") end,				check = function(ply) return ply:IsAdmin() end}
 buttonData["Inventory"] = 		{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("openinv") end,				check = function(ply) return true end}
-buttonData["Edit 3p"] = 		{toggle = false, 	mode = nil, 	func = function() edit3p() end,									check = function(ply) return true end}
 buttonData["Switch Form"] = 	{toggle = false, 	mode = nil, 	func = function() formSelection() end,							check = function(ply) return true end}
 buttonData["Force Powers"] = 	{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("forcePowers") end,			check = function(ply) return true end}
 buttonData["Force Config"] = 	{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("powerConfigs") end,		check = function(ply) return true end}
 buttonData["Saber Crafter"] = 	{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("customizeCrystal") end,	check = function(ply) return true end}
-buttonData["Third Person"] = 	{toggle = true, 	mode = true, 	func = function() RunConsoleCommand("toggleThirdPerson") end,	check = function(ply) return true end}
 buttonData["Scan Lines"] = 		{toggle = true, 	mode = false, 	func = function() RunConsoleCommand("toggleLines") end,			check = function(ply) return true end}
+
+hook.Add("LS+.Config.Reloaded", "LS+.LoadThirdPerson", function()
+	if LSP.Config.EnableThirdPersonSys then
+		buttonData["Edit 3p"] = 		{toggle = false, 	mode = nil, 	func = function() edit3p() end,									check = function(ply) return true end}
+		buttonData["Third Person"] = 	{toggle = true, 	mode = true, 	func = function() RunConsoleCommand("toggleThirdPerson") end,	check = function(ply) return true end}
+	else
+		buttonData["Third Person"] = nil
+		buttonData["Edit 3p"] = nil
+	end
+end)
 
 surface.CreateFont( "cbutton", {
 	font = "Arial Black",
@@ -132,10 +120,10 @@ function createQuickMenu()
 	if IsValid(saberplusQuickMenu) then saberplusQuickMenu:Remove() end
 	saberplusQuickMenu = vgui.Create("DFrame")
 	saberplusQuickMenu:SetPos( ScrW() - realSize - 5, ScrH()/2 - realSize )
-	
+
 	local count = table.Count(buttonData)
-	
-	saberplusQuickMenu:SetSize( realSize, realSizeT * count + (5*(count+1))) -- weeee
+
+	saberplusQuickMenu:SetSize( realSize, realSizeT * count + (5*(count+1)))
 	saberplusQuickMenu:SetTitle( "" )
 	saberplusQuickMenu:SetDraggable(true)
 	saberplusQuickMenu:ShowCloseButton(false)
@@ -146,7 +134,7 @@ function createQuickMenu()
 	saberplusQuickMenu:Hide()
 	saberplusQuickMenu:SetMouseInputEnabled(false)
 	saberplusQuickMenu:DockPadding(5,5,5,5)
-	
+
 	for name,data in pairs(buttonData) do
 		local check = data.check(LocalPlayer())
 		if check then
@@ -161,7 +149,7 @@ function createQuickMenu()
 				data.func()
 			end
 			local color = Color(200,55,235)
-			
+
 			b.Paint = function(self, w, h)
 				if buttonData[name].toggle then
 					if buttonData[name].mode then
@@ -170,7 +158,7 @@ function createQuickMenu()
 						color = Color(177,0,0)
 					end
 				end
-				
+
 				surface.SetDrawColor(23, 23, 23, 255)
 				surface.DrawRect(0, 0, w, h)
 				if self:IsHovered() then
@@ -185,7 +173,7 @@ function createQuickMenu()
 				draw.DrawText(name, "cbutton", w/2 +2, h/4+2, Color( 2, 2, 2, 255 ), TEXT_ALIGN_CENTER)
 				draw.DrawText(name, "cbutton", w/2, h/4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
 			end
-			
+
 			local s = vgui.Create( "DPanel", saberplusQuickMenu)
 			s:SetSize(realSize,5)
 			s:Dock(TOP)
@@ -194,31 +182,26 @@ function createQuickMenu()
 	end
 end
 
-//local open = false
+local open = false
 hook.Add("Think", "okpjdisfokgids", function()
-	if not IsValid(saberplusQuickMenu) then
+	if !IsValid(saberplusQuickMenu) then
 		createQuickMenu()
+	end
+	if open and not input.IsKeyDown(KEY_Q) then
+		saberplusQuickMenu:Hide()
+		saberplusQuickMenu:SetMouseInputEnabled(false)
+		open = false
 	end
 end)
 
 
-//hook.Add("SpawnMenuOpen", "LS+.OpenMenu", function()
-//	if LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "lightsaber_plus" then
-hook.Add("OnContextMenuOpen", "jmoidsfgd", function()	--
+hook.Add("SpawnMenuOpen", "LS+.OpenMenu", function()
+	if LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().isLightsaberPlus then
 	saberplusQuickMenu:Show()
 	saberplusQuickMenu:MakePopup()
-//		open = true
-//		return false
-//	end
-end)
-
-//hook.Add("PlayerButtonUp", "LS+.CloseMenu", function(ply,btn)
-//	if open and btn == "KEY_Q" then
-hook.Add("OnContextMenuClose", "jtyijrty", function()	--
-	saberplusQuickMenu:Hide()
-	saberplusQuickMenu:SetMouseInputEnabled(false)
-//		open = false
-//	end
+		open = true
+		return false
+	end
 end)
 
 surface.CreateFont( "xpbarFont", {
@@ -234,12 +217,12 @@ function drawOutlineBar(t, x, y, w, h, p)
 	local space = 1
 	local lineS = 1
 	surface.SetDrawColor(255,255,255,15)
-    surface.DrawRect(x-lineS,y-space-lineS,w+(lineS*2),lineS)
-    surface.DrawRect(x-lineS,y+h+space,w+(lineS*2),lineS)
+	surface.DrawRect(x-lineS,y-space-lineS,w+(lineS*2),lineS)
+	surface.DrawRect(x-lineS,y+h+space,w+(lineS*2),lineS)
 	surface.DrawRect(x-lineS-space,y-lineS-space,lineS,h+space+lineS+lineS+lineS)
 	surface.DrawRect(x+w+space,y-lineS-space,lineS,h+space+lineS+lineS+lineS)
 	surface.SetDrawColor(255,255,255,200)
-    surface.DrawRect(x,y,w*p,h)
+	surface.DrawRect(x,y,w*p,h)
 	draw.DrawText(math.Round(p*100).."%", "xpbarFont", x+w, y+h+5, Color(255,255,255,155), TEXT_ALIGN_RIGHT)
 	draw.DrawText(t, "xpbarFont", x, y+h+5, Color(255,255,255,155), TEXT_ALIGN_LEFT)
 end
@@ -250,9 +233,10 @@ local xpPerc = 0
 local from = 0
 local cache = 0
 hook.Add("HUDPaint", "LS+ XP Bar", function()
+	if LSP.Config.KillHud then return end
 	local ply = LocalPlayer()
 	if !IsValid(ply:GetActiveWeapon()) then return end
-	if ply:GetActiveWeapon():GetClass() != "lightsaber_plus" then return end
+	if !ply:GetActiveWeapon().isLightsaberPlus then return end
 	local hp, maxhp = math.Clamp(ply:Health(), 0, ply:GetMaxHealth()), ply:GetMaxHealth()
 	local lvl = ply:getsyncLightsaberPlusData("saberLevel", 0)
 	local xp = ply:getsyncLightsaberPlusData("saberXP", 0)
@@ -266,7 +250,7 @@ hook.Add("HUDPaint", "LS+ XP Bar", function()
 		if wide ~= perc then
 			from = wide
 		end
-		cache = from 
+		cache = from
 		from = perc
 	end
 
@@ -289,5 +273,4 @@ hook.Add("HUDPaint", "LS+ XP Bar", function()
 
 	draw.RoundedBox(10, ScrW()/13 - 2, ScrH() - 100, 300, 12, Color(0, 0, 0, 220))
 	draw.RoundedBox(10, ScrW()/13 , ScrH() - 98, 296 * (hp/maxhp), 8, Color(81, 148, 131, 255))
-	
 end)

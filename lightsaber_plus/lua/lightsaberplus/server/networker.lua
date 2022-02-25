@@ -41,7 +41,7 @@ function pmeta:syncLightsaberPlusData(key, val)
 	self.syncedData[key] = val
 	net.Start("saberplus-wep-data-sync")
 		net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-		net.WriteTable({key=key,val=val})
+		net.WriteCompressedTable({key=key,val=val})
 	net.Broadcast()
 	
 end
@@ -51,7 +51,7 @@ function wmeta:syncLightsaberPlusData(key, val)
 	self.syncedData[key] = val
 	net.Start("saberplus-wep-data-sync")
 		net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-		net.WriteTable({key=key,val=val})
+		net.WriteCompressedTable({key=key,val=val})
 	net.Broadcast()
 end
 
@@ -60,7 +60,7 @@ function nmeta:syncLightsaberPlusData(key, val)
 	self.syncedData[key] = val
 	net.Start("saberplus-wep-data-sync")
 		net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-		net.WriteTable({key=key,val=val})
+		net.WriteCompressedTable({key=key,val=val})
 	net.Broadcast()
 end
 
@@ -87,7 +87,7 @@ function wmeta:forceSync(tar)
 	if !(self.syncedData == {}) then
 		net.Start("saberplus-force-data-sync")
 			net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-			net.WriteTable(self.syncedData)
+			net.WriteCompressedTable(self.syncedData)
 		net.Send(tar)
 	end
 end
@@ -97,7 +97,7 @@ function pmeta:forceSync(tar)
 	if !(self.syncedData == {}) then
 		net.Start("saberplus-force-data-sync")
 			net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-			net.WriteTable(self.syncedData)
+			net.WriteCompressedTable(self.syncedData)
 		net.Send(tar)
 	end
 end
@@ -107,7 +107,7 @@ function nmeta:forceSync(tar)
 	if !(self.syncedData == {}) then
 		net.Start("saberplus-force-data-sync")
 			net.WriteInt(self:EntIndex(), LSP.Config.NetworkBits)
-			net.WriteTable(self.syncedData)
+			net.WriteCompressedTable(self.syncedData)
 		net.Send(tar)
 	end
 end

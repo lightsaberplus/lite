@@ -411,7 +411,7 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 	local borderWidth = 2
 	
 	local plateW = (iconS * LSP.Config.MaxForcePowers) + ((LSP.Config.MaxForcePowers+1) * padding)
-	local plateH = (padding*2)
+	local plateH = (padding*2.5)
 	
 	if emptyCheck <= CurTime() then
 		isEmpty = true
@@ -463,6 +463,7 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 			powerCoolDowns[forcePowerLineUp[i]] = powerCoolDowns[forcePowerLineUp[i]] or 0
 			if powerCoolDowns[forcePowerLineUp[i]] > CurTime() then
 				surface.SetDrawColor(100,5,5,200)
+				draw.DrawText(math.Round(powerCoolDowns[forcePowerLineUp[i]] - CurTime(), 1), "barTitleBold", ScrW()/2 - plateW/2 + padding*6 + offset, ScrH() - plateH - iconS + padding*3, color_white, TEXT_ALIGN_CENTER)
 				surface.DrawRect(ScrW()/2 - plateW/2 + padding + offset, ScrH() - plateH - iconS + padding, iconS, iconS)
 			end
 		end
@@ -474,42 +475,7 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 			end
 		end
 		offset = offset + iconS + padding
-	end	
-	//local ply = LocalPlayer()
-	//local sw,sh = ScrW(), ScrH()
-	//local size = 50
-	//local padding = 8
-	//local totalSize = (size*LSP.Config.MaxForcePowers) + (padding*(LSP.Config.MaxForcePowers-1))
-	//local hasPowers = false
-	//for i=1,LSP.Config.MaxForcePowers do
-	//	if forcePowerLineUp[i] then
-	//		hasPowers = true
-	//		break
-	//	end
-	//end
-	//if hasPowers then
-	//	for i=1,LSP.Config.MaxForcePowers do
-	//		if selectedPower == i then
-	//			surface.SetDrawColor(177,5,5,255)
-	//		else
-	//			surface.SetDrawColor(55,55,55,255)
-	//		end
-//
-	//		surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1 - 2, sh-size-5 - 2, size+4, size+4)
-	//		if forcePowerLineUp[i] then
-	//			local powerData = getPower(forcePowerLineUp[i])
-	//			drawBar(Color(255,255,255,255), sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size, powerData.icon)
-//
-	//			powerCoolDowns[forcePowerLineUp[i]] = powerCoolDowns[forcePowerLineUp[i]] or 0
-	//			local delay = powerCoolDowns[forcePowerLineUp[i]]
-//
-	//			if delay > CurTime() then
-	//				surface.SetDrawColor(100,5,5,200)
-	//				surface.DrawRect(sw/2 + ((totalSize/2)*-1) + (size*(i-1)) + (padding*(i-1)) + 1, sh-size-5, size, size)
-	//			end
-	//		end
-	//	end
-	//end
+	end
 end)
 
 
@@ -750,10 +716,9 @@ function createModal2(text, body, color, func)
 end
 
 function openNewPowers(f, mode)
+	local a = "You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!"
 	local body = createScrollPanel(f,0,0,0,0,FILL)
 	local fw,fh = f:GetSize()
-	
-	
 
 	local row = createPanel(body,0,0,0,fh*0.60,TOP)
 	row:DockMargin(0,0,0,0)
@@ -783,7 +748,7 @@ function openNewPowers(f, mode)
 	detailDesc:SetFontInternal("barTitleBold")
 	detailDesc:DockMargin(5,5,5,5)
 	detailDesc:Dock(FILL)
-	detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
+	detailDesc:SetText(a)
 	
 	local powerList = vgui.Create("DPanelList", pows)
 	powerList:Dock(FILL)
@@ -860,7 +825,7 @@ function openNewPowers(f, mode)
 			detailIcon:SetImage("hfgjvs/torcom/logo-icon.png")
 			detailTitle:SetText("LightsaberPlus")
 			detailTitle:SizeToContents()
-			detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
+			detailDesc:SetText(a)
 		end
 		
 		
@@ -905,7 +870,7 @@ function openNewPowers(f, mode)
 			detailIcon:SetImage("hfgjvs/torcom/logo-icon.png")
 			detailTitle:SetText("LightsaberPlus")
 			detailTitle:SizeToContents()
-			detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
+			detailDesc:SetText(a)
 		end
 
 		b.Paint = function(s,w,h)
@@ -937,7 +902,7 @@ function openNewPowers(f, mode)
 			detailIcon:SetImage("hfgjvs/torcom/logo-icon.png")
 			detailTitle:SetText("LightsaberPlus")
 			detailTitle:SizeToContents()
-			detailDesc:SetText("You can learn more about force bar crafting by talking with other players. Our power system allows for combinations and complete customization!")
+			detailDesc:SetText(a)
 		end
 
 		b.Paint = function(s,w,h)
@@ -974,11 +939,6 @@ end
 function openNewForcePowerMenu()
 	local f = createFrame()
 	createNavBar(f)
-	
-	
-	createModal("If you need help with force powers, feel free to ask in chat!", f, colors.primary())
-	
-	
 	local page = openNewPowers(f, true)
 end
 

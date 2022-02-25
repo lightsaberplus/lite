@@ -69,12 +69,7 @@ function drawSlice(ply, blade, pos, ang, len)
 	end
 end
 
-local lerpLengths = {}
- 
 function validateSabers(ply)
-	// useless bc of the if clauses after
-	//ply.leftHilt = ply.leftHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
-	//ply.rightHilt = ply.rightHilt or ClientsideModel("models/props_junk/TrafficCone001a.mdl")
 	if !(IsValid(ply.rightHilt)) then
 		ply.rightHilt = ClientsideModel("models/props_junk/TrafficCone001a.mdl")
 	end
@@ -90,14 +85,15 @@ function validateSabers(ply)
 	drawnBlades[id].right = ply.rightHilt
 end
 
-function craftingPosition(ply)
+function craftingPosition(ply, left)
 	local bone = ply:LookupBone("ValveBiped.Bip01_R_Hand") or 0
 	local pos, ang = ply:GetBonePosition(bone)
-	
+
 	pos = pos + ang:Right() * 20 + ang:Forward() * 10
-	
+
+
 	ang:RotateAroundAxis(ang:Right(), 90)
-	
+
 	ply.craftingLerpPosition = ply.craftingLerpPosition or Vector(0,0,0)
 	ply.craftingLerpAngle = ply.craftingLerpAngle or Angle(0,0,0)
 	
@@ -126,7 +122,7 @@ function handleLightsaber(saber, ply, wep, item, left)
 		saber:SetAngles(ang)
 	else
 		if ply:getsyncLightsaberPlusData("crafting", false) then
-			if ply:getsyncLightsaberPlusData("isLeft", false) and left then
+			if ply:getsyncLightsaberPlusData("isLeft", false) then
 				ply.rightHilt:SetNoDraw(true)
 			else
 				ply.leftHilt:SetNoDraw(true)
@@ -178,7 +174,7 @@ function searchAttachments(ply, wep, saber, left)
 			local item = LSP.GetItem(bladeClass)
 			
 			if item then
-				if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) then
+				if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) and not saber:GetNoDraw() then
 					if item.effect then
 						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Forward(), 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
 					end
@@ -205,7 +201,7 @@ function searchAttachments(ply, wep, saber, left)
 				qVec2 = ply:GetActiveWeapon():getsyncLightsaberPlusData("OFFHAND-quillonInner"..id, Vector(255,255,255))
 			end
 			
-			if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) then -- ne hier das and
+			if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) and not saber:GetNoDraw() then
 				local quillonClass = wep:getsyncLightsaberPlusData("quillonItem"..id, "")
 				local item = LSP.GetItem(quillonClass)
 
@@ -224,7 +220,6 @@ function searchAttachments(ply, wep, saber, left)
 end
 
 function hideSabers(ply, mode)
-	validateSabers(ply)
 	ply.rightHilt:SetNoDraw(mode)
 	ply.leftHilt:SetNoDraw(mode)
 end
@@ -244,10 +239,9 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	local thicknessInner = 1
 	local fadeLength = LSP.Config.SaberTrailSpeed
 	local fadeSep = 5
-	
+
 	ang:RotateAroundAxis(ang:Right(), 90)
-	
-	
+
 	-- Trail Sanity
 	if LSP.Config.SaberTrail then
 		ply.blades[name] = ply.blades[name] or {}
@@ -257,10 +251,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 		ply.blades[name].pos2 = ply.blades[name].pos2 or pos
 		ply.blades[name].ang2 = ply.blades[name].ang2 or ang
 	end
-	-------------------------
-	
-	
-	
+
 	-- Lerp'd Length Management
 	ply.lengths = ply.lengths or {}
 	ply.lengths[name] = ply.lengths[name] or {}
@@ -270,11 +261,7 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	--if IsValid(SABER_CRAFTING_MENU) and item then len = 35 end
 	if len < 1 then return end
 	-------------------------
-	
-	
-	
-	
-	
+
 	-- The blade being drawn.
 	render.SetMaterial(mat(item.glowMaterial))
 	render.DrawBeam( pos + ang:Up() * 1.5, pos + ang:Up() * -(len+1.5), thickness*3, 1, 0, color )
@@ -331,8 +318,6 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 		ply.blades[name].pos2 = LerpVector(FrameTime() * (fadeLength-fadeSep), ply.blades[name].pos2, pos + ang:Up() * -1)
 		ply.blades[name].ang2 = LerpAngle(FrameTime() * (fadeLength-fadeSep), ply.blades[name].ang2, ang)
 	end
-	-------------------------
-	
 
 	if wep:getsyncLightsaberPlusData("saberOn") then
 		doSounds(ply, name, pos)
@@ -344,44 +329,40 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 end
 
 
-hook.Add( "PostDrawTranslucentRenderables", "4222222222222222222222222222g", function(ply)
+hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", function()
 	if LSP.Config.DrawBlades then
 		for _,ply in pairs(player.GetAll()) do
 			if ply:Alive() then
-				validateSabers(ply)
-				craftingPosition(ply)
 				local wep = ply:GetActiveWeapon()
-				if not IsValid(wep) then return end
+				validateSabers(ply)
+				craftingPosition(ply,  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("isLeft", false) or false)
+
+				if not IsValid(wep) or not wep.isLightsaberPlus then hideSabers(ply, true) return end
+
 				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
 				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 				
-				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
+				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) then
 					hideSabers(ply, false)
-					
+
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
+
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
-					
-					local bone = ply:LookupBone("ValveBiped.Bip01_R_Hand") or 0
-					local pos, ang = ply:GetBonePosition(bone)
-					if not item.isMelee then
-						searchAttachments(ply, wep, ply.rightHilt)
+				
+					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
+	
+					if item2 then searchAttachments(ply, wep, ply.leftHilt, true)
+					else ply.leftHilt:SetNoDraw(true) 
 					end
-					if item2 then searchAttachments(ply, wep, ply.leftHilt, true) else ply.leftHilt:SetNoDraw(true) end
-					
-					if !(wep:getsyncLightsaberPlusData("saberOn") or IsValid(SABER_CRAFTING_MENU)) then
-						--hideSabers(ply, true)
+
+					if not (wep:getsyncLightsaberPlusData("saberOn") or IsValid(SABER_CRAFTING_MENU)) then
+						--hideSabers(ply, true)				-- activating this hides the lightsaber if its deavtivated
 						ply.bladePos = {}
 						ply.blades = {}
 						ply:stopSounds()
 					end
-					
-					if not wep.isLightsaberPlus then
-						hideSabers(ply, true)
-					end
-				else
-					hideSabers(ply, true)
 				end
 			end
 		end

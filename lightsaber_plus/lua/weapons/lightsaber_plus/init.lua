@@ -205,7 +205,7 @@ function SWEP:isUsable()
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
 	local item = LSP.GetItem(class)
 
-	if item.isMelee then found = true end
+	if item and item.isMelee then found = true end
 
 	return found
 end

@@ -101,8 +101,8 @@ util.AddNetworkString("saberplus-inv-server-close")
 function meta:networkInv()
 	local inv,customData = self:getInv()
 	net.Start("saberplus-net-inv")
-		net.WriteTable(inv)
-		net.WriteTable(customData)
+		net.WriteCompressedTable(inv)
+		net.WriteCompressedTable(customData)
 	net.Send(self)
 end
 
@@ -124,7 +124,7 @@ end
 net.Receive("saberplus-net-inv-act", function(len,ply)
 	local hash = net.ReadString()
 	local fid = net.ReadString()
-	
+
 	local inv = ply:getInv()
 	local itemClass = inv[hash]
 	local item = LSP.GetItem(itemClass)
@@ -138,10 +138,8 @@ net.Receive("saberplus-net-inv-act", function(len,ply)
 				spawnLightsaberPlusItem(id, ply:GetPos() + Vector(0,0,48) + ply:GetForward() * 50, hash)
 			end
 		else
-			if item.func[fid] then
-				if item.func[fid].canRun(ply, item, hash) then
-					item.func[fid].onRun(ply, item, hash)
-				end
+			if item.func[fid] and item.func[fid].canRun(ply, item, hash) then
+				item.func[fid].onRun(ply, item, hash)
 			end
 		end
 	end

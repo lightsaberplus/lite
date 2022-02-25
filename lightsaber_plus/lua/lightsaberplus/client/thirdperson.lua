@@ -46,36 +46,28 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 	if IsValid(ply:GetVehicle()) then return end
 	
 	if ply:getsyncLightsaberPlusData("crafting", false) then
-		local handBone = "ValveBiped.Bip01_R_Hand"
-		
-		local saberPos = ply.rightHilt:GetPos() + ply.rightHilt:GetUp() * -50 + ply.rightHilt:GetRight() * 60  + ply.rightHilt:GetForward() * 20 
+
+		local saberPos = ply.rightHilt:GetPos() + ply.rightHilt:GetUp() * -50 + ply.rightHilt:GetRight() * 60  + ply.rightHilt:GetForward() * 20
 		local saberAng = Angle(15,ply:GetAngles().y + 180,0)
-		
+
+		//if ply:getsyncLightsaberPlusData("isLeft", false) then
+		//	saberPos = ply.leftHilt:GetPos() + ply.leftHilt:GetUp() * -50 + ply.leftHilt:GetRight() * 60  + ply.leftHilt:GetForward() * 20
+		//end
+
 		if saberPos.z < ply:GetPos().z + 10 then
 			saberPos = Vector(saberPos.x, saberPos.y, ply:GetPos().z + 10)
 		end
-		
-		if ply:getsyncLightsaberPlusData("isLeft", false) then
-			handBone = "ValveBiped.Bip01_L_Hand"
-		end
-		
-		local bone = ply:LookupBone(handBone)
-		local pos, ang = ply:GetBonePosition(bone)
-		
+
 		if headPos == Vector(0,0,0) then headPos = saberPos end
 		if headAng == Angle(0,0,0) then headAng = saberAng end
-		local bone = ply:LookupBone(handBone) or 0
-		
-		
+
 		local saberPosAdd = saberAng:Right() * 0
-		local saberAngAdd = Angle(0,0,0)
-		
-		
+
 		local speed = 3
-		
+
 		headPos = LerpVector(FrameTime()*speed, headPos, saberPos)
 		headAng = LerpAngle(FrameTime()*speed, headAng, saberAng)
-		
+
 		return {
 			origin = headPos,
 			angles = headAng,

@@ -25,7 +25,7 @@ fallingTranslation["revolver"] = "swimming_revolver"
 
 
 function meta:killTime(id)
-	timer.Destroy(id .. self:id())
+	timer.Remove(id .. self:id())
 end
 
 function meta:endAnim()
@@ -57,30 +57,28 @@ end
 
 function overrideAnimation()
 	function GAMEMODE:UpdateAnimation(ply, vel, speed)
-		
 		local l = vel:Length()
 		local mv = 1
-		
+
 		if l > 0.2 then mv = l / speed end
-		
+
 		local r = math.min(mv, 1)
-		
 		local w = ply:WaterLevel()
 		local g = ply:IsOnGround()
-		
+
 		if w >= 2 then
 			r = math.min(r,0.6)
-		elseif!g and l > 1000 then
+		elseif !g and l > 1000 then
 			r = 0.15
 		end
-		
+
 		ply:SetPlaybackRate(ply.sequenceRate or r)
-		
+
 		if CLIENT then
 			GAMEMODE:GrabEarAnimation(ply)
 			GAMEMODE:MouthMoveAnimation(ply) -- These are pretty boring
 		end
-		
+
 		if (ply:InVehicle()) then
 			local v = ply:GetVehicle()
 			if CLIENT then
@@ -91,10 +89,8 @@ function overrideAnimation()
 			end
 		end
 	end
-	
-	local meta = FindMetaTable("Player")
+
 	function meta:anim( s, r, t ) -- seq, rate, time
-		
 		self:SetCycle(0)
 		self.override = true
 		if !s then
@@ -103,14 +99,13 @@ function overrideAnimation()
 			end
 			return
 		end
-		
-		
+
 		self.animTime = CurTime() + t
-		
+
 		if !t then
 			t = self:getAnimTime(s) - 0.15 -- Tinker with this.
 		end
-		
+
 		if SERVER then
 			self:killTime("endTime")
 			self:networkAnim(s,r,t)
@@ -118,8 +113,7 @@ function overrideAnimation()
 				self:makeTime("endTime",t)
 			end
 		end
-		
-		
+
 		self.lastAnim = CurTime() + t
 		self.lastAnimJump = CurTime() + t + 0.1
 		return t -- allows us to see how long we're going to play for.
@@ -127,30 +121,30 @@ function overrideAnimation()
 
 	function GAMEMODE:CalcMainActivity(ply, v)
 		ply.m_bWasOnGround = ply:IsOnGround()
-		ply.m_bWasNoclipping = ( ply:GetMoveType() == MOVETYPE_NOCLIP && !ply:InVehicle() )
+		ply.m_bWasNoclipping = ( ply:GetMoveType() == MOVETYPE_NOCLIP and !ply:InVehicle() )
 
 		self.animTime = self.animTime or 0
-		
+
 		local fm = ply:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)
-		
+
 		local animType = {run = "run_all", idle = "walk_knife", walk = "walk_knife"}
 
 		animType = LSP.Config.Forms[fm]
 
 		ply.mode = ACT_MP_STAND_IDLE
-		
+
 		ply.sequence = -1
-		
+
 		local len = v:Length2DSqr()
-		if len > 22500 then ply.mode = ACT_MP_RUN 
-		elseif len > 0.25 then ply.mode = ACT_MP_WALK 
+		if len > 22500 then ply.mode = ACT_MP_RUN
+		elseif len > 0.25 then ply.mode = ACT_MP_WALK
 		end -- are we moving?
-		
+
 		if ply:getsyncLightsaberPlusData("isLimping", false) then
 			ply.sequence = ply:LookupSequence( "zombie_walk_02" )
 		end
-		
-		if not IsValid(ply:GetActiveWeapon()) then return ply.mode, ply.sequence end
+
+		if !IsValid(ply:GetActiveWeapon()) then return ply.mode, ply.sequence end
 		local wep = ply:GetActiveWeapon()
 
 		if ( wep:getsyncLightsaberPlusData("saberOn") ) then
@@ -164,38 +158,38 @@ function overrideAnimation()
 				end
 			end
 		end
-		
+
 		local isGrounded = ply:IsOnGround()
-	
+
 		local ht = wep:GetHoldType() or "knife"
 		if ht == "normal" then ht = "knife" end
 		if ht == "smg" then ht = "smg1" end
-		
+
 		if !isGrounded then
-			
-			if !(ply.hasSetJumpTime) then
+
+			if !ply.hasSetJumpTime then
 				ply.jumpTime = CurTime() + 0.8
 				ply.hasSetJumpTime = true
 				ply.swimFall = false
 			end
-			
+
 			if ply.jumpTime >= CurTime() then
-				ply.sequence = ply:LookupSequence("jump_"..ht)
+				ply.sequence = ply:LookupSequence("jump_" .. ht)
 			else
 				ply.swimFall = true
 				ply.tickFrame = false
-				
+
 				if IsValid(wep) then
 					local holdType = fallingTranslation[wep:GetHoldType()] or "swimming_all"
 					ply.sequence = ply:LookupSequence(holdType)
 				else
 					ply.sequence = ply:LookupSequence("balanced_jump")
 				end
-				
+
 			end
-			
+
 		end
-		
+
 		if isGrounded then
 			if ply.hasSetJumpTime then
 				if ply.swimFall then
@@ -203,33 +197,32 @@ function overrideAnimation()
 				else
 					ply.landTimer = CurTime() + 0.2
 				end
-				
 				ply.hasSetJumpTime = false
 			end
 			ply.landTimer = ply.landTimer or 0
 			if ply.landTimer >= CurTime() then
 				if ply.swimFall then
-					if !(ply.tickFrame) then
+					if !ply.tickFrame then
 						ply:SetCycle(0)
-						if SERVER then ply.isRolling = CurTime() + 0.5 end
+						if SERVER then
+							ply.isRolling = CurTime() + 0.5
+						end
 						ply.tickFrame = true
 					end
 				else
-					ply.sequence = ply:LookupSequence("cwalk_"..ht)
+					ply.sequence = ply:LookupSequence("cwalk_" .. ht)
 				end
 			end
 		end
-		
+
 		if ply:Crouching() and isGrounded then
-			ply.sequence = ply:LookupSequence("cwalk_"..ht)
+			ply.sequence = ply:LookupSequence("cwalk_" .. ht)
 		end
-		
-		if ply:getsyncLightsaberPlusData("isBlocking", false) then
-			if len <= 155 then
-				ply.sequence = ply:LookupSequence("walk_knife")
-			end
+
+		if ply:getsyncLightsaberPlusData("isBlocking", false) and len <= 155  then
+			ply.sequence = ply:LookupSequence("walk_knife")
 		end
-		
+
 		if !ply:InVehicle() and ply:GetMoveType() == MOVETYPE_NOCLIP then
 			if ply:Crouching() then
 				ply.sequence = ply:LookupSequence("sit_zen")
@@ -242,32 +235,31 @@ function overrideAnimation()
 				end
 			end
 		end
-		
+
 		if ply:InVehicle() then
 			return ply.mode, ply:LookupSequence("sit")
 		end
-		
+
 		if ply.customAnim and ply.customAnim > -1 then ply.sequence = ply.customAnim end
-		
+
 		return ply.mode, ply.sequence
 	end
 	if CLIENT then
 		net.Receive( "saberplus-net-anim", function(len, ply)
-			local ply = net.ReadEntity()
+			local ent = net.ReadEntity()
 			local s = net.ReadString()
 			local r = net.ReadFloat()
 			local t = net.ReadFloat()
-			ply:SetCycle(0) 
-			ply.customAnim = ply:LookupSequence(s)
-			ply.animTime = t or 1
-			ply.sequenceRate = r
-			ply.override = true
-			
+			ent:SetCycle(0)
+			ent.customAnim = ent:LookupSequence(s)
+			ent.animTime = t or 1
+			ent.sequenceRate = r
+			ent.override = true
 		end)
 	end
 end
 
- -- NUTSCRIPT OVERRIDES, makes sure this shit loads even after updating server, takes ~60s.
+-- NUTSCRIPT OVERRIDES, makes sure this shit loads even after updating server, takes ~60s.
 hook.Add( "PostGamemodeLoaded", "fdgher6u465u46u", function() overrideAnimation() end) 										 -- NUTSCRIPT OVERRIDES.
 local loadTime = 0																											 -- NUTSCRIPT OVERRIDES.
 hook.Add("Think", "4290jk", function() if loadTime <= CurTime() then overrideAnimation() loadTime = CurTime() + 60 end end)  -- NUTSCRIPT OVERRIDES.

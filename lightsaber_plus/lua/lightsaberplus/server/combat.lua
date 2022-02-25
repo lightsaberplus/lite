@@ -118,7 +118,7 @@ end
 net.Receive("saberplus-saber-sound", function(len, ply)
 	local wep = ply:GetActiveWeapon()
 	if not IsValid(wep) then return end
-	if not wep:GetClass() == "lightsaber_plus" then return end -- bail, we're hacking.
+	if not wep.isLightsaberPlus then return end -- bail, we're hacking.
 	
 	if wep.canDamage <= CurTime() then return end -- bail, we can't attack anymore.
 	

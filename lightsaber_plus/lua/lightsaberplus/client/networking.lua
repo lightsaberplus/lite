@@ -6,27 +6,27 @@ local dataBlobet = {}
 
 net.Receive("saberplus-data-sync", function()
 	local id = net.ReadInt(LSP.Config.NetworkBits)
-	local data = net.ReadTable()
+	local data = net.ReadCompressedTable()
 	dataBlobet[id] = dataBlobet[id] or {}
 	dataBlobet[id][id] = data.val
 end)
 
 net.Receive("saberplus-wep-data-sync", function()
 	local id = net.ReadInt(LSP.Config.NetworkBits)
-	local data = net.ReadTable()
+	local data = net.ReadCompressedTable()
 	dataBlobet[id] = dataBlobet[id] or {}
 	dataBlobet[id][data.key] = data.val
 end)
 
 net.Receive("saberplus-force-data-sync", function()
 	local id = net.ReadInt(LSP.Config.NetworkBits)
-	local data = net.ReadTable()
+	local data = net.ReadCompressedTable()
 	dataBlobet[id] = data
 end)
 
 net.Receive("saberplus-npc-data-sync", function()
 	local id = net.ReadInt(LSP.Config.NetworkBits)
-	local data = net.ReadTable()
+	local data = net.ReadCompressedTable()
 	dataBlobet[id] = dataBlobet[id] or {}
 	dataBlobet[id][data.key] = data.val
 end)

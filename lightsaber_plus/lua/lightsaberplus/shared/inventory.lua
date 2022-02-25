@@ -1,12 +1,16 @@
-local items = {}
+items = items or {}
 
 local function Drop(ply, item, hash)
 	ply:StripWeapon(item.class)
 	return true
 end
 
+local function saberUnEquip(ply, item, hash)
+	ply:StripWeapon(item.class)
+end
+
 local function saberEquip(ply, item, hash)
-	local wep = ply:Give(item.class)
+	local wep = ply:GetWeapon(item.class) or ply:Give(item.class)
 	if IsValid(wep) then
 		wep.hash = hash
 		wep:syncLightsaberPlusData("itemClass", item.id)
@@ -35,48 +39,20 @@ local function saberEquip(ply, item, hash)
 	end
 end
 
-local function saberOffHand(ply, item, hash)
-	local wep = ply:GetActiveWeapon()
-	if IsValid(wep) and wep.hash != hash then
-		wep.offhash = hash
-		wep:syncLightsaberPlusData("OFFHAND-itemClass", item.id)
-		for i = 1,10 do
-			local quil = itemGetData(hash, "quillon"..i, "")
-			if quil != "" then
-				local crystalItem = LSP.GetItem(quil)
-				if crystalItem then
-					local vec = Vector(crystalItem.color.r, crystalItem.color.g, crystalItem.color.b)
-					wep:syncLightsaberPlusData("OFFHAND-quillon"..i, vec)
-				end
-			end
-		end
-		for i=1,10 do
-			local blade = itemGetData(hash, "blade"..i, "")
-			if blade != "" then
-				local crystalItem = LSP.GetItem(blade)
-				if crystalItem then
-					local vec = Vector(crystalItem.color.r, crystalItem.color.g, crystalItem.color.b)
-					wep:syncLightsaberPlusData("OFFHAND-blade"..i, vec)
-				end
-			end
-		end
-	end
-end
-
 local saberFuncs = {
 	["Unequip"] = {
 		canRun = function(ply, item) return true end,
-		onRun = function(ply, item) ply:StripWeapon(item.class) end,
+		onRun = saberUnEquip,
 	},
 	["Equip"] = {
 		canRun = function(ply, item, hash) return true end,
 		onRun = saberEquip,
-	},
-	["Off-Hand"] = {
-		canRun = function(ply, item, hash) return true end,
-		onRun = saberOffHand,
-	},
+	}
 }
+function LSP.ManipulateItemFuncs(k, v)
+	saberFuncs[k] = v
+end
+hook.Run("LS+.ManipulateItemFuncs")
 
 function LSP.AddItem(key, data)
 	if (data.isMelee or data.isHilt) and not data.disableOverride then

@@ -44,13 +44,13 @@ surface.CreateFont( "weebs", {
 
 
 net.Receive("void-text", function()
-	local pack = net.ReadTable()
+	local pack = net.ReadCompressedTable()
 	chat.AddText(Color(255,0,255), "Lightsaber+  ",unpack(pack))
 	MsgC("\n")
 end)
 
 net.Receive("void-logs", function()
-	local pack = net.ReadTable()
+	local pack = net.ReadCompressedTable()
 	MsgC(Color(255,0,255), "Lightsaber+ ",unpack(pack))
 	MsgC("\n")
 end)

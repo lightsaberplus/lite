@@ -8,13 +8,13 @@ local meta = FindMetaTable("Player")
 
 function meta:text(data)
 	net.Start("void-text")
-		net.WriteTable(data)
+		net.WriteCompressedTable(data)
 	net.Send(self)
 end
 
 function broadcast(data)
 	net.Start("void-text")
-		net.WriteTable(data)
+		net.WriteCompressedTable(data)
 	net.Broadcast()
 end
 

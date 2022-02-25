@@ -174,5 +174,19 @@ hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
 
 end)
 
+function net.WriteCompressedTable(table)
+    local data = util.TableToJSON(table)
+    data = util.Compress(data)
+    net.WriteInt(#data, 32)
+    net.WriteData(data, #data)
+end
+
+function net.ReadCompressedTable()
+    local num = net.ReadInt(32)
+    local data = util.Decompress(net.ReadData(num))
+    return util.JSONToTable(data)
+end
+
+
 // Development
 if true then LSP:Initialize() end
