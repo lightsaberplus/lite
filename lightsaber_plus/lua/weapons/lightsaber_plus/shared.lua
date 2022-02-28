@@ -1,18 +1,16 @@
-SWEP.PrintName = "Lightsaber"
-SWEP.Author = "Lightsaber ++ Team"
-SWEP.Category = "Lightsaber ++"
+SWEP.PrintName = "Lightsaber :)"
+SWEP.Author = "Lord Tyler & His Best Friend, Xozzy."
+SWEP.Category = "LightsaberPlus"
 
 SWEP.Slot = 0
 SWEP.SlotPos = 1
 
-SWEP.Spawnable = true
+SWEP.Spawnable = false
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.Secondary.Automatic = true
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
-
-SWEP.isCustomizable = true
 SWEP.isLightsaberPlus = true
 
 SWEP.Primary.ClipSize = -1
@@ -37,8 +35,4 @@ end
 
 function SWEP:Initialize()
 
-end
-
-function SWEP:ShouldDropOnDie()
-	return false
 end
