@@ -2,18 +2,18 @@ local keys = {["!"] = true, ["/"] = true, ["."] = true, ["~"] = true, ["["] = tr
 local regedFuncs = {}
 local isFunc = {}
 
-util.AddNetworkString("void-text")
+util.AddNetworkString("ls++-text")
 
 local meta = FindMetaTable("Player")
 
 function meta:text(data)
-	net.Start("void-text")
+	net.Start("ls++-text")
 		net.WriteCompressedTable(data)
 	net.Send(self)
 end
 
 function broadcast(data)
-	net.Start("void-text")
+	net.Start("ls++-text")
 		net.WriteCompressedTable(data)
 	net.Broadcast()
 end
@@ -81,18 +81,3 @@ regFunc("cheat",{
         return ply:IsAdmin() or ply:IsSuperAdmin() -- Lets admins run command.
     end
 })
-
-
-/*
-regFunc("shield",{
-    onRun = function(ply, args)
-        local shield = ents.Create("lightsaber_plus_shield")
-        shield.ply = ply
-        shield.model = "models/dawnguardd/shield_dawnguard_dawnguardshieldmagic.mdl"
-        shield:Spawn()
-    end,
-    canRun = function(ply, args)
-        return ply:IsAdmin() or ply:IsSuperAdmin() -- Lets admins run command.
-    end
-})
-*/

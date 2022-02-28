@@ -11,11 +11,11 @@ local subBarSize = 4
 
 local hits = {}
 
-function fastText(msg,x,y,c)
-	draw.DrawText(msg, "weebs", x, y, c, TEXT_ALIGN_CENTER)
+local function quickDis(a,b,c)
+	return a:DistToSqr(b) < c -- pRoBaBlLy nOt OptImIzeD eNouGh (but it will doooo)
 end
 
-function addHit(pos, amt, color)
+local function addHit(pos, amt, color)
 	local hit = {}
 	hit.pos = pos
 	hit.offset = 0
@@ -25,7 +25,11 @@ function addHit(pos, amt, color)
 	table.insert(hits, hit)
 end
 
-function animeNumbers() -- weeb fucks
+local function hitNumbers()
+	local function fastText(msg,x,y,c)
+		draw.DrawText(msg, "weebs", x, y, c, TEXT_ALIGN_CENTER)
+	end
+
 	if table.Count(hits) < 1 then return end
 	local pos = LocalPlayer():GetPos()
 	for id,hit in pairs(hits) do
@@ -60,7 +64,6 @@ net.Receive("saberplus-riposte", function()
 	addHit(pos, "PARRY!", Color(245, 245,25))
 end)
 
-
 local hide = {
 	["CHudHealth"] = true,
 	["CHudBattery"] = true,
@@ -76,13 +79,10 @@ hook.Add( "HUDShouldDraw", "HideHUD", function( name )
 	if ( hide[ name ] ) then return false end
 end)
 
-
-
-
 hook.Add("HUDPaint", "soimjdfghdfgh", function()
 	if LSP.Config.KillHud then return end
 	if LSP.Config.HitNumbers then
-		animeNumbers()
+		hitNumbers()
 	end
 end)
 saberplusQuickMenu = nil
@@ -211,22 +211,6 @@ surface.CreateFont( "xpbarFont", {
 	weight = 5000,
 	antialias = true,
 } )
-
-
-function drawOutlineBar(t, x, y, w, h, p)
-	local space = 1
-	local lineS = 1
-	surface.SetDrawColor(255,255,255,15)
-	surface.DrawRect(x-lineS,y-space-lineS,w+(lineS*2),lineS)
-	surface.DrawRect(x-lineS,y+h+space,w+(lineS*2),lineS)
-	surface.DrawRect(x-lineS-space,y-lineS-space,lineS,h+space+lineS+lineS+lineS)
-	surface.DrawRect(x+w+space,y-lineS-space,lineS,h+space+lineS+lineS+lineS)
-	surface.SetDrawColor(255,255,255,200)
-	surface.DrawRect(x,y,w*p,h)
-	draw.DrawText(math.Round(p*100).."%", "xpbarFont", x+w, y+h+5, Color(255,255,255,155), TEXT_ALIGN_RIGHT)
-	draw.DrawText(t, "xpbarFont", x, y+h+5, Color(255,255,255,155), TEXT_ALIGN_LEFT)
-end
-
 
 
 local xpPerc = 0

@@ -27,12 +27,18 @@ local function saberEquip(ply, item, hash)
 		end
 		for i = 1,10 do
 			local blade = itemGetData(hash, "blade"..i, "")
-			if blade != "" then
+			local inner = itemGetData(hash, "bladeInner"..i, "")
+			if blade != "" or inner != "" then
 				local crystalItem = LSP.GetItem(blade)
 				if crystalItem then
 					local vec = Vector(crystalItem.color.r, crystalItem.color.g, crystalItem.color.b)
 					wep:syncLightsaberPlusData("blade"..i, vec)
 					wep:syncLightsaberPlusData("bladeItem"..i, blade)
+				end
+				local innerItem = LSP.GetItem(inner)
+				if innerItem then
+					local vec = Vector(innerItem.color.r, innerItem.color.g, innerItem.color.b)
+					wep:syncLightsaberPlusData("bladeInner"..i, vec)
 				end
 			end
 		end

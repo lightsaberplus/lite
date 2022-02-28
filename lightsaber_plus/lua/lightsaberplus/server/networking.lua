@@ -109,7 +109,6 @@ net.Receive("saberplus-crystal-remove-blade", function(len, ply)
 	id = math.Clamp(id,1,10)
 	wep:syncLightsaberPlusData("blade"..id, Vector(999,9999,999))
 	wep:syncLightsaberPlusData("bladeItem"..id, "")
-	wep:syncLightsaberPlusData("saberOn", false)
 	local currentItem = itemGetData(wep.hash, "blade"..id, "")
 	if !(currentItem == "") then
 		ply:giveItem(currentItem)

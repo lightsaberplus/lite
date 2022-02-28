@@ -266,8 +266,8 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	render.SetMaterial(mat(item.glowMaterial))
 	render.DrawBeam( pos + ang:Up() * 1.5, pos + ang:Up() * -(len+1.5), thickness*3, 1, 0, color )
 	
-	local override = hook.Run("LS+.AnimateBlade", item, pos, ang, len, thickness, innerColor) or true
-	if override then
+	local override = hook.Run("LS+.AnimateBlade", item, pos, ang, len, thickness, innerColor)
+	if !override then
 		render.SetMaterial(mat(item.bladeMaterial))
 		render.DrawBeam( pos, pos + ang:Up() * -len, thickness, 1, 0, innerColor )
 	end

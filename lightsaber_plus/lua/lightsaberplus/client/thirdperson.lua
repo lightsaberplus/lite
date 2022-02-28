@@ -2,7 +2,7 @@ local removeBones = {
 	"ValveBiped.Bip01_Head1",
 	"ValveBiped.Bip01_Neck1"
 }
- -- Shoutout to amp for showing me how to do this. <3
+-- Shoutout to amp for showing me how to do this. <3
 local holdTypes = {
 	melee2 		= {up = 1, forward = 6, right = 3},
 	ar2 		= {up = 3, forward = 8, right = 2},
@@ -36,23 +36,19 @@ local headAng = Angle(0,0,0)
 
 local eyesLerp = Angle(0,0,0)
 
-local stPos = Vector(0,0,-9999)
-local stAng = Angle(0,0,0)
-
 hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 	local wep = ply:GetActiveWeapon()
-	
 	if !IsValid(wep) then return end
 	if IsValid(ply:GetVehicle()) then return end
-	
+
 	if ply:getsyncLightsaberPlusData("crafting", false) then
 
 		local saberPos = ply.rightHilt:GetPos() + ply.rightHilt:GetUp() * -50 + ply.rightHilt:GetRight() * 60  + ply.rightHilt:GetForward() * 20
 		local saberAng = Angle(15,ply:GetAngles().y + 180,0)
 
-		//if ply:getsyncLightsaberPlusData("isLeft", false) then
-		//	saberPos = ply.leftHilt:GetPos() + ply.leftHilt:GetUp() * -50 + ply.leftHilt:GetRight() * 60  + ply.leftHilt:GetForward() * 20
-		//end
+		if ply:getsyncLightsaberPlusData("isLeft", false) then
+			saberPos = ply.leftHilt:GetPos() + ply.leftHilt:GetUp() * -50 + ply.leftHilt:GetRight() * 60  + ply.leftHilt:GetForward() * 20
+		end
 
 		if saberPos.z < ply:GetPos().z + 10 then
 			saberPos = Vector(saberPos.x, saberPos.y, ply:GetPos().z + 10)
@@ -60,8 +56,6 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 
 		if headPos == Vector(0,0,0) then headPos = saberPos end
 		if headAng == Angle(0,0,0) then headAng = saberAng end
-
-		local saberPosAdd = saberAng:Right() * 0
 
 		local speed = 3
 
@@ -75,18 +69,21 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 			drawviewer = true
 		}
 	else
+		if headPos != Vector(0,0,0) then headPos = Vector(0,0,0) end
+		if headAng != Angle(0,0,0) then headAng = Angle(0,0,0) end
 		if LSP.Config.EnableThirdPersonSys then
 			local holdType = wep:GetHoldType()
-			
-			if !(holdTypes[holdType]) then return end
-			if !(wep.isLightsaberPlus) then return end
-			
-			local eyes = {Pos = ply:GetPos() + Vector(-5,10,55)}	-- edited 
+
+			if !holdTypes[holdType] then return end
+			if !wep.isLightsaberPlus then return end
+
+			local eyes = ply:GetAttachment(ply:LookupAttachment("eyes"))
+			--local eyes = {Pos = ply:GetPos() + Vector(-5,10,55)}	-- edited 
 
 			local up = holdTypes[holdType].up
 			local forward = holdTypes[holdType].forward
 			local right = holdTypes[holdType].right
-			
+
 			if thirdperson then
 				if headPos == Vector(0,0,0) then headPos = eyes.Pos end
 				if headAng == Angle(0,0,0) then headAng = ang + Angle(LIGHTSABER_PLUS_3P_ANGOFF,0,0) end
@@ -94,7 +91,6 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 				local perc = backTrace.Fraction
 
 				local amt = -LIGHTSABER_PLUS_3P_FWOFF * perc
-				local additionSpeed = 0
 				if util.IsInWorld(headPos) then
 					headPos = backTrace.HitPos
 				end
@@ -115,7 +111,7 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 				}
 			else
 				local view = {
-					origin = eyes.Pos+(ply:GetUp()*up)+(ply:GetForward()*forward)+(ply:GetRight()*right),
+					origin = eyes.Pos + (ply:GetUp() * up) -(ply:GetForward() * forward) + (ply:GetRight() * right),
 					angles = ang,
 					fov = 95,
 					drawviewer = true
@@ -147,10 +143,10 @@ end)
 hook.Add("Think", "CL_Secondperson_44Bonesz", function()
 	local ply = LocalPlayer()
 	local wep = ply:GetActiveWeapon()
-	if LSP.Config.EnableThirdPersonSys and (IsValid(wep) && holdTypes[wep:GetHoldType()] && (wep.isLightsaberPlus) && (!thirdperson) ) then
+	if LSP.Config.EnableThirdPersonSys and IsValid(wep) and holdTypes[wep:GetHoldType()] and wep.isLightsaberPlus and !thirdperson then
 		for _, bone in pairs(removeBones) do
 			if (ply:LookupBone(bone)) then
-				ply:ManipulateBoneScale(ply:LookupBone(bone), Vector()*0)
+				ply:ManipulateBoneScale(ply:LookupBone(bone), Vector() * 0)
 			end
 		end
 	else
