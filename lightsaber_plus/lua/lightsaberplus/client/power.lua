@@ -1,8 +1,14 @@
 forcePowerLineUp = forcePowerLineUp or {}
 
-forcePowerMoveLeft =  forcePowerMoveLeft or nil
-forcePowerMoveRight = forcePowerMoveRight or nil
-forcePowerCast = forcePowerCast or nil
+local forcePowerMoveLeft = cookie.GetNumber("forcePowerMoveLeft", LSP.Config.ForcePrev)
+local forcePowerMoveRight = cookie.GetNumber("forcePowerMoveRight", LSP.Config.ForceNext)
+local forcePowerCast = cookie.GetNumber("forcePowerCast", LSP.Config.ForceCast)
+
+hook.Add("LS+.Config.Reloaded", "LS+.LoadForceBinds", function()
+	forcePowerMoveLeft = cookie.GetNumber("forcePowerMoveLeft", LSP.Config.ForcePrev)
+	forcePowerMoveRight = cookie.GetNumber("forcePowerMoveRight", LSP.Config.ForceNext)
+	forcePowerCast = cookie.GetNumber("forcePowerCast", LSP.Config.ForceCast)
+end)
 
 local cachedMaterials = {}
 local selectedPower = 1
@@ -218,9 +224,7 @@ function keyBindMaker()
 	bar:DockMargin(2,2,0,0)
 	
 	local binder = vgui.Create( "DBinder", bar )
-	
-	if forcePowerMoveLeft then binder:SetValue(forcePowerMoveLeft) end
-	
+	binder:SetValue(forcePowerMoveLeft)
 	binder:SetSize( 128*1.5, 64 )
 	binder:Dock(LEFT)
 	binder:SetTextColor(Color(0,0,0))
@@ -233,7 +237,7 @@ function keyBindMaker()
 	
 	binder.OnChange = function(n)
 		forcePowerMoveLeft = binder:GetValue()
-		file.Write( "saberplusKeybinds_Left.txt", tostring(binder:GetValue()))
+		cookie.Set("forcePowerMoveLeft", binder:GetValue())
 		LocalPlayer():EmitSound("UI/buttonclick.wav")
 	end
 	
@@ -251,9 +255,7 @@ function keyBindMaker()
 	bar:DockMargin(2,2,0,0)
 	
 	local binder = vgui.Create( "DBinder", bar )
-	
-	if forcePowerMoveRight then binder:SetValue(forcePowerMoveRight) end
-	
+	binder:SetValue(forcePowerMoveRight)
 	binder:SetSize( 128*1.5, 64 )
 	binder:Dock(LEFT)
 	binder:SetTextColor(Color(0,0,0))
@@ -266,7 +268,7 @@ function keyBindMaker()
 	
 	binder.OnChange = function(n)
 		forcePowerMoveRight = binder:GetValue()
-		file.Write( "saberplusKeybinds_Right.txt", tostring(binder:GetValue()))
+		cookie.Set("forcePowerMoveRight", binder:GetValue())
 		LocalPlayer():EmitSound("UI/buttonclick.wav")
 	end
 	
@@ -300,7 +302,7 @@ function keyBindMaker()
 
 	binder.OnChange = function(n)
 		forcePowerCast = binder:GetValue()
-		file.Write( "saberplusKeybinds_Cast.txt", tostring(binder:GetValue()))
+		cookie.Set("forcePowerCast", binder:GetValue())
 		LocalPlayer():EmitSound("UI/buttonclick.wav")
 	end
 	
@@ -342,27 +344,6 @@ net.Receive("saberplus-send-cooldown", function()
 end)
 
 hook.Add("Think", "j024tipmdfg2490iop", function()
-	if !(hasReadConfigs) then
-		local leftFile = file.Read( "saberplusKeybinds_Left.txt", "DATA" )
-		if (leftFile) then
-			forcePowerMoveLeft = tonumber(leftFile)
-		else
-			forcePowerMoveLeft = LSP.Config.ForcePrev
-		end
-		local rightFile = file.Read( "saberplusKeybinds_Right.txt", "DATA" )
-		if (rightFile) then
-			forcePowerMoveRight = tonumber(rightFile)
-		else
-			forcePowerMoveRight = LSP.Config.ForceNext
-		end
-		local castFile = file.Read( "saberplusKeybinds_Cast.txt", "DATA" )
-		if (castFile) then
-			forcePowerCast = tonumber(castFile)
-		else
-			forcePowerCast = LSP.Config.ForceCast
-		end
-		hasReadConfigs = true
-	end
 	if input.IsKeyDown(forcePowerMoveRight) or input.IsMouseDown(forcePowerMoveRight) then
 		if lastForceMove <= CurTime() then
 			selectedPower = selectedPower + 1
@@ -416,7 +397,7 @@ hook.Add("HUDPaint", "joidsfgsdfgsdf", function()
 	if emptyCheck <= CurTime() then
 		isEmpty = true
 		for slot,id in pairs(forcePowerLineUp) do
-			if !(id == "empty") then
+			if id != "empty" then
 				isEmpty = false
 				break
 			end
@@ -931,9 +912,7 @@ function createNavBar(f)
 	p.Paint = function(s, w, h)
 		drawText("navTitle", "LightsaberPlus Sabers", ScreenScale(3), h*0.5 - (ScreenScale(13)/2), TEXT_ALIGN_LEFT, colors.white())
 	end
-	
 	// DASHBOARD | INFORMATION | PLAYER MANAGER | SETTINGS
-	
 end
 
 function openNewForcePowerMenu()

@@ -1,5 +1,6 @@
 local customDebugLines = {}
 local isDebugging = false
+
 function LSP.AddDebugLines(startp, endp, col)
 	if isDebugging then
 		local customDebug = {}
@@ -10,6 +11,7 @@ function LSP.AddDebugLines(startp, endp, col)
 		table.insert(customDebugLines, customDebug)
 	end
 end
+
 hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	if isDebugging then
 		for k,v in pairs(customDebugLines) do
@@ -96,7 +98,7 @@ function craftingPosition(ply, left)
 
 	ply.craftingLerpPosition = ply.craftingLerpPosition or Vector(0,0,0)
 	ply.craftingLerpAngle = ply.craftingLerpAngle or Angle(0,0,0)
-	
+
 	ply.craftingLerpPosition = LerpVector(FrameTime() * 0.5, ply.craftingLerpPosition, pos)
 	ply.craftingLerpAngle = LerpAngle(FrameTime() * 0.5, ply.craftingLerpAngle, ang)
 end
@@ -108,16 +110,16 @@ function handleLightsaber(saber, ply, wep, item, left)
 	for k,v in pairs(item.bgs) do
 		saber:SetBodygroup(k,v)
 	end
-	
+
 	if left then
 		local bone = ply:LookupBone("ValveBiped.Bip01_L_Hand") or 0
 		local pos, ang = ply:GetBonePosition(bone)
 
 		ang:RotateAroundAxis(ang:Forward(), 90)
 		ang:RotateAroundAxis(ang:Up(), -90)
-		
+
 		pos = pos + ang:Right() * -3 + ang:Up() * 1 + ang:Forward() * -6
-		
+
 		saber:SetPos(pos)
 		saber:SetAngles(ang)
 	else
@@ -127,7 +129,6 @@ function handleLightsaber(saber, ply, wep, item, left)
 			else
 				ply.leftHilt:SetNoDraw(true)
 			end
-			
 			saber:SetParent(saber)
 			saber:RemoveEffects(EF_BONEMERGE)
 			saber:SetPos(ply.craftingLerpPosition)
@@ -233,10 +234,9 @@ end
 
 function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 	ply.blades = ply.blades or {}
-	if !(item) then return end
+	if !item then return end
 
 	local thickness = 1.5
-	local thicknessInner = 1
 	local fadeLength = LSP.Config.SaberTrailSpeed
 	local fadeSep = 5
 
@@ -247,7 +247,6 @@ function drawBlade(item, wep, ply, name, pos, ang, tarLen, color, innerColor)
 		ply.blades[name] = ply.blades[name] or {}
 		ply.blades[name].pos = ply.blades[name].pos or pos
 		ply.blades[name].ang = ply.blades[name].ang or ang
-		
 		ply.blades[name].pos2 = ply.blades[name].pos2 or pos
 		ply.blades[name].ang2 = ply.blades[name].ang2 or ang
 	end
@@ -343,18 +342,18 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
-				
+
 				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) then
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
 
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
-				
+
 					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
-	
+
 					if item2 then searchAttachments(ply, wep, ply.leftHilt, true)
-					else ply.leftHilt:SetNoDraw(true) 
+					else ply.leftHilt:SetNoDraw(true)
 					end
 
 					if not (wep:getsyncLightsaberPlusData("saberOn") or IsValid(SABER_CRAFTING_MENU)) then
@@ -370,6 +369,6 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 end)
 
 concommand.Add("toggleLines", function()
-	isDebugging = !isDebugging
+	isDebugging = not isDebugging
 end)
 

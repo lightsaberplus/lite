@@ -26,10 +26,10 @@ local holdTypes = {
 }
 
 local thirdperson = false
-LIGHTSABER_PLUS_3P_LROFF = 0
-LIGHTSABER_PLUS_3P_FWOFF = 125
-LIGHTSABER_PLUS_3P_UDOFF = 0
-LIGHTSABER_PLUS_3P_ANGOFF = 0
+LIGHTSABER_PLUS_3P_LROFF = cookie.GetNumber("LIGHTSABER_PLUS_3P_LROFF", 0)
+LIGHTSABER_PLUS_3P_FWOFF = cookie.GetNumber("LIGHTSABER_PLUS_3P_FWOFF", 125)
+LIGHTSABER_PLUS_3P_UDOFF = cookie.GetNumber("LIGHTSABER_PLUS_3P_UDOFF", 0)
+LIGHTSABER_PLUS_3P_ANGOFF = cookie.GetNumber("LIGHTSABER_PLUS_3P_ANGOFF", 0)
 
 local headPos = Vector(0,0,0)
 local headAng = Angle(0,0,0)
@@ -46,9 +46,9 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 		local saberPos = ply.rightHilt:GetPos() + ply.rightHilt:GetUp() * -50 + ply.rightHilt:GetRight() * 60  + ply.rightHilt:GetForward() * 20
 		local saberAng = Angle(15,ply:GetAngles().y + 180,0)
 
-		if ply:getsyncLightsaberPlusData("isLeft", false) then
-			saberPos = ply.leftHilt:GetPos() + ply.leftHilt:GetUp() * -50 + ply.leftHilt:GetRight() * 60  + ply.leftHilt:GetForward() * 20
-		end
+		//if ply:getsyncLightsaberPlusData("isLeft", false) then
+		//	saberPos = ply.leftHilt:GetPos() + ply.leftHilt:GetUp() * -50 + ply.leftHilt:GetRight() * 60  + ply.leftHilt:GetForward() * 20
+		//end
 
 		if saberPos.z < ply:GetPos().z + 10 then
 			saberPos = Vector(saberPos.x, saberPos.y, ply:GetPos().z + 10)

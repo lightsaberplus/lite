@@ -1,6 +1,6 @@
-include("shared.lua")  
+include("shared.lua")
 
-function ENT:Initialize( )
+function ENT:Initialize()
 end
 
 function ENT:Draw()
