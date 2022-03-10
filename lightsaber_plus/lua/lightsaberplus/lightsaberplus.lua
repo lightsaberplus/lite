@@ -184,7 +184,3 @@ function net.ReadCompressedTable()
 	local data = util.Decompress(net.ReadData(num))
 	return util.JSONToTable(data)
 end
-
-
-// Development
-if true then LSP:Initialize() end
