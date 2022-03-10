@@ -88,8 +88,7 @@ net.Receive("saberplus-net-inv", function(len, ply)
 		local customData = net.ReadCompressedTable()
 		for k,m in SortedPairsByValue(inv, true) do
 			local v = LSP.GetItem(m)
-			if (v) then
-				PrintTable(v)
+			if v then
 				local bar = vgui.Create("DPanel", INVENTORY_PANEL.inv)
 				bar:SetSize(invScale,invScale)
 				bar:Dock(TOP)
@@ -254,8 +253,18 @@ concommand.Add("admInv", function()
 			b:SizeToContents()
 			b:Dock(RIGHT)
 			b.DoClick = function()
-				SetClipboardText(v.id)
-				chat.AddText(Color(255,255,255), "Copied '",Color(177,0,0), v.id, Color(255,255,255),"' to your clipboard!")
+				local m = DermaMenu(true, b)
+				m:AddOption( "Copy", function()
+					SetClipboardText(v.id)
+					chat.AddText(Color(255,255,255), "Copied '",Color(177,0,0), v.id, Color(255,255,255),"' to your clipboard!")
+				end )
+				m:AddOption( "Give yourself", function() LocalPlayer():ConCommand("say !giveitem "..LocalPlayer():SteamID64().." "..v.id) end )
+				local s = m:AddSubMenu("Give")
+				for _, p in pairs(player.GetAll()) do
+					s:AddOption(p:Name(), function()
+						LocalPlayer():ConCommand("say !giveitem "..p:SteamID64().." "..v.id)
+					end)
+				end
 			end
 
 			function b:Paint(w,h)

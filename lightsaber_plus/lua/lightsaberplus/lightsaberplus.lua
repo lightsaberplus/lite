@@ -71,6 +71,7 @@ function LSP:Initialize()
     end
 
     print("Loaded successfully LS+")
+	print("Version: ", LSP.Version)
     hook.Run("LS+.FinishedLoading")
 end
 
@@ -166,25 +167,22 @@ hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
 		LSP.Config.TeamForcePowers[1001] = {
 			["*"] = true
 		}
-	elseif DarkRP then
-
-	elseif nut then
-
+	else
+		hook.Run("LS+.Config.ForcePowers")
 	end
-
 end)
 
-function net.WriteCompressedTable(table)
-    local data = util.TableToJSON(table)
-    data = util.Compress(data)
-    net.WriteInt(#data, 32)
-    net.WriteData(data, #data)
+function net.WriteCompressedTable(tbl)
+	local data = util.TableToJSON(tbl)
+	data = util.Compress(data)
+	net.WriteInt(#data, 32)
+	net.WriteData(data, #data)
 end
 
 function net.ReadCompressedTable()
-    local num = net.ReadInt(32)
-    local data = util.Decompress(net.ReadData(num))
-    return util.JSONToTable(data)
+	local num = net.ReadInt(32)
+	local data = util.Decompress(net.ReadData(num))
+	return util.JSONToTable(data)
 end
 
 

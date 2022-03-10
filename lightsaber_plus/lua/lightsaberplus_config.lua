@@ -34,6 +34,7 @@ return {//Dont delete this line
     DefaultForm = "Shii-Cho",               -- Default Form, make sure this exists or u fuck the system.
     FaceOnBlock = false,                    -- When you block a shot, should we face the target? (the answer is no, its ass, but ur choice.)
     Block360 = true,                        -- Can we block 360 degrees?
+    DontDamageSameTeam = false,             -- Can we Damage Players who are in the same team as ourself
 
     BlockPerc = 0.1,                        -- incomingDamage * LSP.Config.BlockPerc = newDamage
     RegenDelay = 10,                        -- 60s is recommended

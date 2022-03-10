@@ -162,20 +162,20 @@ function searchAttachments(ply, wep, saber, left)
 			local blade = saber:GetAttachment(att.id)
 			local qVec = ply:GetActiveWeapon():getsyncLightsaberPlusData("blade"..id, Vector(999,999,999))
 			local qVec2 = ply:GetActiveWeapon():getsyncLightsaberPlusData("bladeInner"..id, Vector(255,255,255))
-			
+			local bladeClass = wep:getsyncLightsaberPlusData("bladeItem"..id, "")
+			local item = LSP.GetItem(bladeClass)
+
 			if left then
 				qVec = ply:GetActiveWeapon():getsyncLightsaberPlusData("OFFHAND-blade"..id, Vector(999,999,999))
 				qVec2 = ply:GetActiveWeapon():getsyncLightsaberPlusData("OFFHAND-bladeInner"..id, Vector(255,255,255))
+				bladeClass = wep:getsyncLightsaberPlusData("OFFHAND-bladeItem"..id, "")
 			end
-			
+
 			local drawID = id
 			if left then drawID = id * 50 end
-			
-			local bladeClass = wep:getsyncLightsaberPlusData("bladeItem"..id, "")
-			local item = LSP.GetItem(bladeClass)
-			
+
 			if item then
-				if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) and not saber:GetNoDraw() then
+				if qVec != Vector(999,999,999) and wep:getsyncLightsaberPlusData("saberOn", false) and !saber:GetNoDraw() then
 					if item.effect then
 						runEffects(item.effect, ply, blade.Pos, blade.Ang, blade.Ang:Forward(), 35, Color(qVec.r, qVec.g, qVec.b), Color(qVec2.r, qVec2.g, qVec2.b))
 					end

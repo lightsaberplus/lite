@@ -109,10 +109,10 @@ function doHitEffects(hitPos)
 	local edd = EffectData()
 	edd:SetOrigin(hitPos)
 	util.Effect("BloodImpact", edd)
-	
-	local edd = EffectData()
-	edd:SetOrigin(hitPos)
-	util.Effect("cball_bounce", edd)
+
+	local ed = EffectData()
+	ed:SetOrigin(hitPos)
+	util.Effect("cball_bounce", ed)
 end
 
 net.Receive("saberplus-saber-sound", function(len, ply)
@@ -126,18 +126,18 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 	local hitPos = net.ReadVector()
 	local id = net.ReadInt(32)
 	local pos = ply:GetPos()
-	
-	--if tar:IsPlayer() then
-		--if tar:Team() == ply:Team() then 
-		--	return
-		--end
-	--end
-	
-	
+
+	if tar:IsPlayer() and LSP.Config.DontDamageSameTeam and tar:Team() == ply:Team() then
+			return
+	end
+
 	id = math.Clamp(id, 1, 10) -- no. bad.
 	
 	local maxDist = LSP.Config.MaxReach or 150
-	local maxEntDist = 500
+	local maxEntDist = 300
+
+	if tar:IsPlayer() and pos:Distance(tar:GetPos()) >= maxDist then return -- bail, target out of range.
+	elseif pos:Distance(tar:GetPos()) >= maxEntDist then return end
 	
 	tar.absorbTimer = tar.absorbTimer or 0
 	if tar.absorbTimer >= CurTime() then return end -- bail, they are absorbing.
@@ -177,7 +177,6 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 	end
 	
 	if tar:IsPlayer() then
-		if pos:Distance(tar:GetPos()) >= maxDist then return end -- bail, target out of range.
 		tar.shouldRiposte = false
 		tar.blockTimer = tar.blockTimer or 0
 		if tar.blockTimer >= CurTime() then
@@ -216,7 +215,6 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 		tar:EmitSound(snd)
 		tar:EmitSound("physics/body/body_medium_break"..math.random(1,4)..".wav")	
 	else
-		if pos:Distance(tar:GetPos()) >= maxEntDist then return end
 		if tar:IsNPC() then
 			local ed = EffectData()
 			ed:SetOrigin(hitPos)
@@ -252,11 +250,6 @@ net.Receive("saberplus-saber-sound", function(len, ply)
 	ply.lastStaminaDrain = CurTime() + LSP.Config.RegenDelay
 end)
 
-local blockedCenter = "judge_b_block"
-local blockedLeft = "h_block_left"
-local blockedRight = "h_block_right"
-local blockedAir = "judge_a_s1_charge"
-
 hook.Add("PostEntityTakeDamage", "dgko35mihdslfgh", function(ply, dmg,took)
 	if took then
 		local d = dmg:GetDamage()
@@ -269,6 +262,12 @@ hook.Add("PostEntityTakeDamage", "dgko35mihdslfgh", function(ply, dmg,took)
 	end
 end)
 
+hook.Add( "OnPlayerHitGround", "LS++.NoFallDamage", function( ply, inWater, onFloater, speed )
+    if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon().isLightsaberPlus then
+		return true
+    end
+end )
+
 hook.Add("EntityTakeDamage", "dgkomihdslfgh", function(ply, dmg)
 	
 	if LSP.Config.KillDamageMod then return end
@@ -278,17 +277,10 @@ hook.Add("EntityTakeDamage", "dgkomihdslfgh", function(ply, dmg)
 	if ply:IsNPC() then ply.HasDeathRagdoll = false end
 	if !(ply:IsPlayer()) then return end
 	
-	if IsValid(ply:GetActiveWeapon()) then
-		if ply:GetActiveWeapon().isLightsaberPlus then
-			if dmg:GetDamageType() == DMG_FALL then return true end
-		end
+	if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon().isLightsaberPlus then
+		if dmg:GetDamageType() == DMG_FALL then return true end
 	end
-	
-	local class = "errooo" -- lmao
-	if IsValid(ply:GetActiveWeapon()) then
-		class = ply:GetActiveWeapon():getsyncLightsaberPlusData("itemClass", "eroo")
-	end
-	
+
 	if !ply:getsyncLightsaberPlusData("isBlocking") then return end
 	local atk = dmg:GetAttacker()
 	
@@ -296,7 +288,6 @@ hook.Add("EntityTakeDamage", "dgkomihdslfgh", function(ply, dmg)
 	
 	
 	
-	local vicPos = ply:GetPos()
 	local vicPos = ply:GetPos()
 	local vicAng = ply:GetAngles() vicAng:Normalize()
 	if dmg:GetDamageType() == DMG_BLAST then return end
@@ -399,7 +390,5 @@ end)
 
 hook.Add("PlayerDeath", "kiodmrfg", function(ply,inf,atk)
 	ply:syncLightsaberPlusData("staminaPower", 100)
-	if ply:IsPlayer() then
-		ply:ConCommand("stopsound")
-	end
+	ply:ConCommand("stopsound")
 end)

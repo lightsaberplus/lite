@@ -41,8 +41,6 @@ hook.Add("PlayerSay", "420909403vc42", function(ply, text, team)
 	end
 end)
 
-
-
 regFunc("giveitem",{
     onRun = function(ply, args)
         local cmd = args[1]
@@ -62,20 +60,8 @@ regFunc("giveitem",{
 		if !IsValid(tar) or !sid or !id then ply:ChatPrint("Command arguements incorrect!") return end
         tar:giveItem(id)
 		tar:ChatPrint("You have been given '"..id.."' into your inventory.")
+		if tar == ply then return end
 		ply:ChatPrint("You have given ".. tar:Nick() .." '"..id.."'")
-    end,
-    canRun = function(ply, args)
-        return ply:IsAdmin() or ply:IsSuperAdmin() -- Lets admins run command.
-    end
-})
-
-regFunc("cheat",{
-    onRun = function(ply, args)
-        local cmd = args[1]
-        local id = args[2]
-		if !id then return end
-        ply:giveItem(id)
-		ply:ChatPrint("You have been given '"..id.."' into your inventory.")
     end,
     canRun = function(ply, args)
         return ply:IsAdmin() or ply:IsSuperAdmin() -- Lets admins run command.
