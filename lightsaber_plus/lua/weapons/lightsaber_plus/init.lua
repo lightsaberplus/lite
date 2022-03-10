@@ -4,7 +4,7 @@ include('shared.lua')
 
 function SWEP:PrimaryAttack()
 	local ply = self.Owner
-	if LIGHTSABER_PLUS_ROLL_ENABLED then
+	if LSP.Config.CombatRoll then
 		if !ply:IsOnGround() or ply:KeyDown(IN_DUCK) then
 			self.lastRoll = self.lastRoll or 0
 			self.primaryDelay = self.primaryDelay or 0
@@ -13,24 +13,24 @@ function SWEP:PrimaryAttack()
 					if !(ply:isAnimating()) then
 						if ply:KeyDown(IN_MOVELEFT) then
 							ply:anim("roll_left", 1, 0.5)
-							ply:SetVelocity(ply:GetRight() * -LIGHTSABER_PLUS_ROLL_SPEED)
+							ply:SetVelocity(ply:GetRight() * -LSP.Config.RollSpeed)
 							ply.forcedRollLeft = CurTime() + 0.5 
 						elseif ply:KeyDown(IN_BACK) then
-							ply:SetVelocity(ply:GetForward() * -LIGHTSABER_PLUS_ROLL_SPEED)
+							ply:SetVelocity(ply:GetForward() * -LSP.Config.RollSpeed)
 							ply:anim("roll_backward", 1, 0.5)
 							ply.forcedRollBack = CurTime() + 0.5 
 						elseif ply:KeyDown(IN_MOVERIGHT) then
-							ply:SetVelocity(ply:GetRight() * LIGHTSABER_PLUS_ROLL_SPEED)
+							ply:SetVelocity(ply:GetRight() * LSP.Config.RollSpeed)
 							ply:anim("roll_right", 1, 0.5)
 							ply.forcedRollRight = CurTime() + 0.5 
 						else
-							ply:SetVelocity(ply:GetForward() * LIGHTSABER_PLUS_ROLL_SPEED)
+							ply:SetVelocity(ply:GetForward() * LSP.Config.RollSpeed)
 							ply:anim("roll_forward", 1, 0.5)
 							ply.forcedRoll = CurTime() + 0.5 
 						end
 					end
 					self.primaryDelay = CurTime() + 0.75
-					self.lastRoll = CurTime() + LIGHTSABER_PLUS_ROLL_DELAY
+					self.lastRoll = CurTime() + LSP.Config.RollDelay
 					return
 				else
 					local tr = ply:GetEyeTrace()
@@ -61,28 +61,28 @@ function SWEP:PrimaryAttack()
 	end
 	
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 
-	ply.currentForm = ply.currentForm or LIGHTSABER_PLUS_DEFAULT_FORM
+	ply.currentForm = ply.currentForm or LSP.Config.DefaultForm
 	local form = ply.currentForm
 	
-	local maxCombo = #LIGHTSABER_PLUS_FORMS[form].w
+	local maxCombo = #LSP.Config.Forms[form].w
 	
 	if ply:KeyDown(IN_MOVELEFT) then
-		maxCombo = #LIGHTSABER_PLUS_FORMS[form].a
+		maxCombo = #LSP.Config.Forms[form].a
 	end
 	
 	if ply:KeyDown(IN_MOVERIGHT) then
-		maxCombo = #LIGHTSABER_PLUS_FORMS[form].d
+		maxCombo = #LSP.Config.Forms[form].d
 	end
 	
 	if ply:KeyDown(IN_FORWARD) then
 		if ply:KeyDown(IN_MOVELEFT) then
-			maxCombo = #LIGHTSABER_PLUS_FORMS[form].wa
+			maxCombo = #LSP.Config.Forms[form].wa
 		end
 		
 		if ply:KeyDown(IN_MOVERIGHT) then
-			maxCombo = #LIGHTSABER_PLUS_FORMS[form].wd
+			maxCombo = #LSP.Config.Forms[form].wd
 		end
 	end
 	
@@ -111,7 +111,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].a[self.comboNumber]
+				data = LSP.Config.Forms[form].a[self.comboNumber]
 			end
 			
 			if ply:KeyDown(IN_MOVERIGHT) then
@@ -120,7 +120,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].d[self.comboNumber]
+				data = LSP.Config.Forms[form].d[self.comboNumber]
 			end
 		end
 		
@@ -131,7 +131,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].wa[self.comboNumber]
+				data = LSP.Config.Forms[form].wa[self.comboNumber]
 			end
 		
 			if ply:KeyDown(IN_MOVERIGHT) then
@@ -140,7 +140,7 @@ function SWEP:PrimaryAttack()
 				if self.comboNumber > bitLevel then
 					self.comboNumber = 1
 				end
-				data = LIGHTSABER_PLUS_FORMS[form].wd[self.comboNumber]
+				data = LSP.Config.Forms[form].wd[self.comboNumber]
 			end
 		end
 		
@@ -150,7 +150,7 @@ function SWEP:PrimaryAttack()
 			if self.comboNumber > bitLevel then
 				self.comboNumber = 1
 			end
-			data = LIGHTSABER_PLUS_FORMS[form].w[self.comboNumber]
+			data = LSP.Config.Forms[form].w[self.comboNumber]
 		end
 		local anim = data.anim
 		local len = ply:SequenceDuration(ply:LookupSequence(anim)) - data.shave
@@ -203,9 +203,9 @@ function SWEP:isUsable()
 	end
 
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 
-	if item.isMelee then found = true end
+	if item and item.isMelee then found = true end
 
 	return found
 end
@@ -213,14 +213,14 @@ end
 function SWEP:SecondaryAttack()
 	local blockTime = 0.1
 	local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-	local item = getItem(class)
+	local item = LSP.GetItem(class)
 	
 	if !(self:isUsable()) then return end
 	
 	if not self:getsyncLightsaberPlusData("saberOn") then
 		self:syncLightsaberPlusData("saberOn", true)
-		self:SetWeaponHoldType( LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LIGHTSABER_PLUS_DEFAULT_FORM)].hold )
-		self:SetHoldType( LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LIGHTSABER_PLUS_DEFAULT_FORM)].hold )
+		self:SetWeaponHoldType( LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
+		self:SetHoldType( LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold )
 		self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_on.mp3")
 	end
 	
@@ -245,14 +245,12 @@ end
 function SWEP:Initialize()
 	self:SetWeaponHoldType( "normal" )
 	self:SetHoldType( "normal" )
-	
-	self:SetWeaponHoldType( "normal" )
-	self:SetHoldType( "normal" )
+
 	self:syncLightsaberPlusData("saberOn", false)
 	
 	timer.Simple(0, function()
 		local ply = self.Owner
-		ply.currentForm = ply.currentForm or LIGHTSABER_PLUS_DEFAULT_FORM
+		ply.currentForm = ply.currentForm or LSP.Config.DefaultForm
 		local form = ply.currentForm
 		
 		local saberXP = ply:getSaberXP()
@@ -278,16 +276,13 @@ function SWEP:Initialize()
 			
 		end
 	end)
-	
-	self:syncLightsaberPlusData("saberOn", false)
-	
 end
 
 function SWEP:Reload()
 	if !self.noSpam then self.noSpam = 0 end
 	if self.noSpam <= CurTime() then
 		local class = self:getsyncLightsaberPlusData("itemClass", "eroo")
-		local item = getItem(class)
+		local item = LSP.GetItem(class)
 
 		if !(self:isUsable()) then
 			self:SetWeaponHoldType( "normal" )
@@ -304,13 +299,13 @@ function SWEP:Reload()
 				self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_off.mp3")
 			end
 		else
-			self:SetWeaponHoldType(LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LIGHTSABER_PLUS_DEFAULT_FORM)].hold)
-			self:SetHoldType(LIGHTSABER_PLUS_FORMS[self.Owner:getsyncLightsaberPlusData("saberForm", LIGHTSABER_PLUS_DEFAULT_FORM)].hold)
+			self:SetWeaponHoldType(LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
+			self:SetHoldType(LSP.Config.Forms[self.Owner:getsyncLightsaberPlusData("saberForm", LSP.Config.DefaultForm)].hold)
 			if not item.isMelee then
 				self.Owner:EmitSound("hfg/weapons/saber/enemy_saber_on.mp3")
 			end
 		end
-		self.noSpam = CurTime() + 1
+		self.noSpam = CurTime() + 0.5
 	end
 end
 
