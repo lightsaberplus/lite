@@ -22,21 +22,6 @@ hook.Run("LS+.Reload") // Reload specific code blocks at Lua Refresh
 
 function LSP:Initialize()
 
-    local function validateconfig()
-        local succ, err = pcall(include, "lightsaberplus_config.lua")
-        if succ then
-            // err is now the returned table
-            table.Merge(LSP.Config, err)
-            hook.Run("LS+.Config.Reloaded")
-        else
-            print("You fucked up your Lightsaberplus Config")
-            print(err)
-        end
-    end
-
-    validateconfig()
-    hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
-
     local f, dlcs = file.Find("lightsaberplus/dlcs/*", "LUA")
     for _, path in ipairs(dlcs or {}) do
         if file.Exists("lightsaberplus/dlcs/"..path.."/"..path..".lua", "LUA") then
@@ -69,6 +54,21 @@ function LSP:Initialize()
             include("lightsaberplus/client/"..file)
         end
     end
+
+	local function validateconfig()
+        local succ, err = pcall(include, "lightsaberplus_config.lua")
+        if succ then
+            // err is now the returned table
+            table.Merge(LSP.Config, err)
+            hook.Run("LS+.Config.Reloaded")
+        else
+            print("You fucked up your Lightsaberplus Config")
+            print(err)
+        end
+    end
+
+    validateconfig()
+    hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
 
     print("Loaded successfully LS+")
 	print("Version: ", LSP.Version)
