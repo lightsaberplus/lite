@@ -16,11 +16,26 @@ LSP = LSP or {
 		}
     }
 }
+local function validateconfig()
+	local succ, err = pcall(include, "lightsaberplus_config.lua")
+	if succ then
+		// err is now the returned table
+		table.Merge(LSP.Config, err)
+		hook.Run("LS+.Config.Reloaded")
+	else
+		print("You fucked up your Lightsaberplus Config")
+		print(err)
+	end
+end
 
 
+hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
 hook.Run("LS+.Reload") // Reload specific code blocks at Lua Refresh
 
 function LSP:Initialize()
+	validateconfig()
+
+
 
     local f, dlcs = file.Find("lightsaberplus/dlcs/*", "LUA")
     for _, path in ipairs(dlcs or {}) do
@@ -55,24 +70,10 @@ function LSP:Initialize()
         end
     end
 
-	local function validateconfig()
-        local succ, err = pcall(include, "lightsaberplus_config.lua")
-        if succ then
-            // err is now the returned table
-            table.Merge(LSP.Config, err)
-            hook.Run("LS+.Config.Reloaded")
-        else
-            print("You fucked up your Lightsaberplus Config")
-            print(err)
-        end
-    end
-
-    validateconfig()
-    hook.Add("LS+.Reload", "LS+.ReloadConfig", validateconfig)
-
     print("Loaded successfully LS+")
 	print("Version: ", LSP.Version)
     hook.Run("LS+.FinishedLoading")
+	hook.Run("LS+.Reload")
 end
 
 hook.Add("InitPostEntity", "LS+.Initialize", LSP.Initialize)
