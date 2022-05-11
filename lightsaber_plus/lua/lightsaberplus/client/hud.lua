@@ -1,7 +1,7 @@
 local wisp = Material("swrp/wisp.png", "mips smooth")
 local leftbar = Material("swrp/leftbar.png")
 local rightbar = Material("swrp/rightbar.png")
-
+print("dd")
 local staminaLerp = 0
 local forceLerp = 0
 
@@ -88,7 +88,7 @@ end)
 saberplusQuickMenu = nil
 
 local buttonData = {}
-buttonData["Item List"] = 		{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("adminv") end,				check = function(ply) return ply:IsAdmin() end}
+buttonData["Item List"] = 		{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("adminv") end,				check = function(ply) return true end}
 buttonData["Inventory"] = 		{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("openinv") end,				check = function(ply) return true end}
 buttonData["Switch Form"] = 	{toggle = false, 	mode = nil, 	func = function() formSelection() end,							check = function(ply) return true end}
 buttonData["Force Powers"] = 	{toggle = false, 	mode = nil, 	func = function() RunConsoleCommand("forcePowers") end,			check = function(ply) return true end}
@@ -109,14 +109,31 @@ end)
 surface.CreateFont( "cbutton", {
 	font = "Arial Black",
 	extended = false,
-	size = ScreenScale(8),
+	size = ScreenScale(9),
 	weight = 500,
 	antialias = true,
 })
 
+surface.CreateFont( "cbuttonov", {
+	font = "Arial Black",
+	extended = false,
+	size = ScreenScale(12),
+	weight = 500,
+	antialias = true,
+})
+
+
 function createQuickMenu()
-	local realSize = 256
+	local realSize = 286
 	local realSizeT = 64
+	local scrw,scrh = ScrW(),ScrH()
+	local Color = Color
+	local rbox = draw.RoundedBox
+	local text = draw.SimpleText
+	local color_black = Color(0,0,0,255)
+	local color_transblack = Color(0,0,0,240)
+	local color_white = Color(255,255,255,255)
+
 	if IsValid(saberplusQuickMenu) then saberplusQuickMenu:Remove() end
 	saberplusQuickMenu = vgui.Create("DFrame")
 	saberplusQuickMenu:SetPos( ScrW() - realSize - 5, ScrH()/2 - realSize )
@@ -128,19 +145,30 @@ function createQuickMenu()
 	saberplusQuickMenu:SetDraggable(true)
 	saberplusQuickMenu:ShowCloseButton(false)
 	saberplusQuickMenu.Paint = function(self, w, h)
-		surface.SetDrawColor( 5, 5, 5, 255 )
-		surface.DrawRect( 0, 0, w, h )
+		rbox(40,0,0,w,h,color_transblack)
 	end
 	saberplusQuickMenu:Hide()
 	saberplusQuickMenu:SetMouseInputEnabled(false)
 	saberplusQuickMenu:DockPadding(5,5,5,5)
 
+	local Top = vgui.Create("DPanel", saberplusQuickMenu)
+	Top:Dock(TOP)
+	Top:DockMargin(0,1,0,0)
+	Top:SetTall(scrh*0.06)
+	Top.Paint = function(self, w, h)
+		rbox(90,0,0,w,h,color_white)
+		rbox(90,2,2,w-4,h-4,color_black)
+		text("Quick Select", "cbuttonov", w/2, h/2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+
+
+	
 	for name,data in pairs(buttonData) do
 		local check = data.check(LocalPlayer())
 		if check then
 			local b = vgui.Create( "DButton", saberplusQuickMenu)
-			b:SetPos(0, 0)
-			b:SetSize(realSize, realSizeT)
+			b:SetTall(scrh*0.05)
+			b:DockMargin(9,0,9,0)
 			b:Dock(TOP)
 			b:SetText("")
 			b.DoClick = function()
@@ -150,6 +178,9 @@ function createQuickMenu()
 			end
 			local color = Color(200,55,235)
 
+
+			local speed = 7
+			local barStatus = 100  
 			b.Paint = function(self, w, h)
 				if buttonData[name].toggle then
 					if buttonData[name].mode then
@@ -158,20 +189,14 @@ function createQuickMenu()
 						color = Color(177,0,0)
 					end
 				end
-
-				surface.SetDrawColor(23, 23, 23, 255)
-				surface.DrawRect(0, 0, w, h)
-				if self:IsHovered() then
-					surface.SetDrawColor(27, 27, 27, 255)
-					surface.DrawRect(0, 0, w, h)
-					surface.SetDrawColor(color.r, color.g, color.b, 255)
-					surface.DrawRect( 0, h-7, w, 7 )
+				if self:IsHovered() then 
+					barStatus = math.Clamp(barStatus + speed * FrameTime(), 0, 1)
 				else
-					surface.SetDrawColor(color.r, color.g, color.b, 255)
-					surface.DrawRect(0, h-4, w, 4)
+					barStatus = math.Clamp(barStatus - speed * FrameTime(), 0, 1)
 				end
+				draw.RoundedBox(5, 0 + ScrW() * 0.08 * (1 - barStatus), scrh*0.04, w * barStatus, .5, color_white)
 				draw.DrawText(name, "cbutton", w/2 +2, h/4+2, Color( 2, 2, 2, 255 ), TEXT_ALIGN_CENTER)
-				draw.DrawText(name, "cbutton", w/2, h/4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER)
+				draw.DrawText(name, "cbutton", w/2, h/4, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER)
 			end
 
 			local s = vgui.Create( "DPanel", saberplusQuickMenu)
@@ -180,6 +205,7 @@ function createQuickMenu()
 			s.Paint = function()end
 		end
 	end
+	
 end
 
 local open = false

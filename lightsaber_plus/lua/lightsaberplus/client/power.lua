@@ -213,11 +213,46 @@ surface.CreateFont( "barFont", {
 } )
 
 bindMaker = bindMaker or nil
+
 function keyBindMaker()
+	local Color = Color 
+	local color_white = Color(255,255,255,255)
+	local color_black = Color(0,0,0,255)
+	local color_red = Color(255,0,0,255)
+	local color_green = Color(0,255,0,255)
+
+	local surface = surface
+	local draw = draw
+	local rbox = draw.RoundedBox
+	local stext = draw.SimpleText
+
 	if bindMaker then bindMaker:Remove() end
 
-	local f = createFrame(200, 128*1.5)
-	f:SetSize(600, 128*2.5)
+	local f = vgui.Create("DPanel")
+	f:SetSize(ScrW()/2,ScrH()/2)
+	f:Center()
+	f:MakePopup()
+
+	f.Paint = function(self,w,h)
+		draw.RoundedBox(0,0,0,w,h,color_black)
+	end
+
+	
+    local Betaclose = vgui.Create("DButton", f)
+    Betaclose:Dock(BOTTOM)
+    Betaclose.DoClick = function()
+        f:Remove()
+    end
+
+/*
+
+
+    local Betaclose = vgui.Create("DButton", f)
+    Betaclose:Dock(BOTTOM)
+    Betaclose.DoClick = function()
+        f:Close()
+    end
+
 	local back = backPanel(f,0)
 	
 	local bar = innerPanel(back, 64)
@@ -315,7 +350,7 @@ function keyBindMaker()
 	title:Dock(LEFT)
 	
 	spacer(back, 10, TOP)
-	
+	*/
 	
 	bindMaker = f
 end

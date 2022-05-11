@@ -585,56 +585,108 @@ net.Receive("saberplus-ping-inv-upd", function()
 end)
 
 function formSelection()
-    local w, h = ScrW() * 0.3, ScrH() * 0.75
-    local f = vgui.Create("DFrame")
+    
+    local scrw, scrh = ScrW(), ScrH()
+    local w, h = scrw * 0.3, scrh * 0.75
+    local vc = vgui.Create
+    local drawText = draw.SimpleText
+    local rboxx = draw.RoundedBox
+    local color_white = Color(255, 255, 255, 255)
+    local color_darkbg = Color(19, 14, 24)
+    local color_darkbg2 = Color(22, 21, 24)
+
+    local f = vgui.Create("DPanel")
     f:SetSize(w, h)
-    f:SetTitle("")
     f:Center()
     f:MakePopup()
-    f:ShowCloseButton(true)
 
     function f:Paint(w, h)
-        surface.SetDrawColor(25, 25, 25, 255)
-        surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, 0, w * 0.05, 1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, 0, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w - 1, 0, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w * 0.95, 0, w * 0.05, 1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, 0, w * 0.05, 1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, 0, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w - 1, 0, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w * 0.95, 0, w * 0.05, 1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, h - 1, w * 0.05, 1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(0, h * 0.9, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w - 1, h * 0.9, 1, h * 0.1)
-        surface.SetDrawColor(177, 2, 2, 255)
-        surface.DrawRect(w * 0.95, h - 1, w * 0.05, 1)
+        rboxx(15,0, 0, w, h, color_darkbg)
     end
-
+    
     f.inv = vgui.Create("DScrollPanel", f)
     f.inv:Dock(FILL)
+    f.inv:DockMargin(0, 0, 0, 2.5)
+    local sbar = f.inv:GetVBar()
+    sbar:SetSize(5,0)
+    sbar:SetHideButtons( true )
+    function sbar.btnGrip:Paint(w, h) draw.RoundedBoxEx(14,0,0,w,h,Color(183,0,255),false,false,false,true) end
+    function sbar:Paint(w, h) draw.RoundedBoxEx(14,0,0,w,h,Color(46,46,46),false,false,false,true) end
+    function sbar.btnUp:Paint(w, h) return end
+    function sbar.btnDown:Paint(w, h) return end
 
     for _, form in pairs(LSP.Config.FormOrder) do
         local data = LSP.Config.Forms[form]
         local p = vgui.Create("DPanel", f.inv)
-        p:SetSize(150, 150)
+        p:SetTall(100)
         p:Dock(TOP)
+        p:DockMargin(5, 5,5,5)
 
-        p.Paint = function(s, w, h)
-            surface.SetDrawColor(16, 16, 16, 255)
-            surface.DrawRect(0, 0, w, h)
+        p.Paint = function(s, w, h)            
+            local clr = Color(255, 255, 255)
+            
+            rboxx(90,0,0,w,h,Color(46,13,56))
+            rboxx(90,2, 2, w-4, h-4, color_darkbg2)
+         --   rboxx(100,0,5,w/2-200,h-15,Color(255,255,255,255))
+           -- draw.DrawText(data.icon, "form", w / 2 - 237, h / 2 - 30, Color(177, 2, 2), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
+
+        local l1 = vgui.Create("DLabel", p)
+        l1:SetText("")
+        l1:Dock(LEFT)
+        l1:DockMargin(5, 5, 0,5)
+        l1:SetWide(100)
+
+        l1.Paint = function(s, w, h)
+            rboxx(100,0,0,w,h,Color(46,13,56))
+            rboxx(100,2,2,w-4,h-4,Color(28,26,26))
+            draw.DrawText(data.icon, "form", w / 2, h / 2 - 30, Color(177, 2, 2), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+
+        local l2 = vgui.Create("DLabel", p)
+        l2:SetText("")
+        l2:Dock(LEFT)
+        l2:DockMargin(0, 0, 0,0)
+        l2:SetWide(ScrW()*0.5)
+
+        l2.Paint = function(s, w, h)
+            draw.DrawText(form, "xozziesNoodle3", 25, s:GetTall()/2-40, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+          --  draw.DrawText(data.desc, "xozziesNoodle2", 25, 40, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+        end
+        
+        local desc = vgui.Create("DPanel", p)
+        desc:SetPos(ScrW()*0.067,ScrH()*0.042)
+        desc:SetSize(ScrW()*0.18,50)
+        desc.Paint = nil
+
+        local description = vgui.Create( "RichText", desc )
+        description:Dock( FILL )
+        description:AppendText(data.desc)
+
+
+        local get = vgui.Create("DButton", p)
+        get:SetText("")
+        get:Dock(RIGHT)
+        get:DockMargin(0,10,10,10)
+        get:SetWide(70)
+        local getted = false
+        get.Paint = function(s, w, h)
+            draw.RoundedBoxEx(100,0,0,w,h,Color(46,13,56),false,true,false,true)
+            draw.RoundedBoxEx(100,2,2,w-4,h-4,Color(28,26,26),false,true,false,true)
+            draw.DrawText("➧", "form", w / 2, h / 2 - 30, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+        get.DoClick = function()
+            net.Start("lightsaber+ form swap")
+            net.WriteString(form)
+            net.SendToServer()
+            f:Remove()
+        end
+        
+
+
+        
+/*
 
         spacer(f.inv, 10, TOP)
         local icon = vgui.Create("DPanel", p)
@@ -674,7 +726,43 @@ function formSelection()
             surface.SetDrawColor(177, 0, 0, 255)
             surface.DrawRect(0, h * 0.33, w, h * 0.35)
         end
+        */
     end
+    
+    local bottom = vgui.Create("DPanel", f)
+    bottom:SetTall(scrh*0.075)
+    bottom:Dock(BOTTOM)
+    bottom.Paint = nil
+
+        local close = vc("DButton", bottom)
+        close:Dock(FILL)
+        close:DockMargin(scrw*0.01,10,10,scrw*0.01)
+        close:SetText("")
+        close.DoClick = function()
+            f:Remove()
+        end
+        local speed = 7
+        local barStatus = 0 
+        close.Paint = function(self,w,h)
+            local tc = Color(255,255,255,255)
+            if self:IsHovered() then 
+                barStatus = math.Clamp(barStatus + speed * FrameTime(), 0, 1)
+            else
+                barStatus = math.Clamp(barStatus - speed * FrameTime(), 0, 1)
+            end
+            if self:IsHovered() then 
+                tc = Color(250,0,0,255)
+            end
+            rboxx(100,0,0,w,h,Color(46,13,56))
+            rboxx(100,2,2,w-4,h-4,color_darkbg)
+            if self:IsHovered() then
+                rboxx(100,0 + ScrW() * 0.17 * (1 - barStatus),0,w * barStatus,h,Color(46,13,56))
+            end
+            
+            drawText("Close", "form", w / 2, h / 2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+        end
+
 end
 
 function edit3p()

@@ -11,6 +11,13 @@ surface.CreateFont( "xozziesNoodle2", {
 	weight = 4500,
 	antialias = true,
 })
+surface.CreateFont( "xozziesNoodle3", {
+	font = "Arial",
+	size = ScrH() * 0.039,
+	weight = 4500,
+	antialias = true,
+})
+
 
 surface.CreateFont( "cooldude", {
 	font = "Arial",
@@ -29,7 +36,7 @@ surface.CreateFont( "hash", {
 
 surface.CreateFont( "form", {
 	font = "Arial",
-	size = 90,
+	size = 60,
 	weight = 45,
 	antialias = true,
 })
