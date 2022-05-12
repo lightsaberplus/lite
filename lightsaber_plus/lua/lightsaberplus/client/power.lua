@@ -20,21 +20,21 @@ end)
 
 
 surface.CreateFont( "buttonHeader", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(8),
 	weight = 500,
 	antialias = true,
 } )
 surface.CreateFont( "buttonHeader2", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(8),
 	weight = 500,
 	antialias = true,
 } )
 surface.CreateFont( "forceHeader", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(13),
 	weight = 100,
@@ -42,7 +42,7 @@ surface.CreateFont( "forceHeader", {
 } )
 
 surface.CreateFont( "barFont", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(6),
 	weight = 100,
@@ -183,21 +183,21 @@ end
 local cachedMaterials = {}
 
 surface.CreateFont( "buttonHeader", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(8),
 	weight = 500,
 	antialias = true,
 } )
 surface.CreateFont( "buttonHeader2", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(8),
 	weight = 500,
 	antialias = true,
 } )
 surface.CreateFont( "forceHeader", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(13),
 	weight = 100,
@@ -205,7 +205,7 @@ surface.CreateFont( "forceHeader", {
 } )
 
 surface.CreateFont( "barFont", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(6),
 	weight = 100,
