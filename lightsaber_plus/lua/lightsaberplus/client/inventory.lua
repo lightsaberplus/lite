@@ -1,18 +1,18 @@
 surface.CreateFont( "invTitle", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(7),
 	weight = 50,
 	antialias = true,
 })
 surface.CreateFont( "invTitle2", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(7),
 	weight = 4500,
 	antialias = true,
 })
 
 surface.CreateFont( "descTitle", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(5),
 	weight = 500,
 	antialias = true,

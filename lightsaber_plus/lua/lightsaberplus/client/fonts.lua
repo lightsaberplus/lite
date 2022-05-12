@@ -1,26 +1,26 @@
 surface.CreateFont( "xozziesNoodle", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(8),
 	weight = 50,
 	antialias = true,
 })
 
 surface.CreateFont( "xozziesNoodle2", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(8),
 	weight = 4500,
 	antialias = true,
 })
 
 surface.CreateFont( "cooldude", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(5),
 	weight = 4500,
 	antialias = true,
 })
 
 surface.CreateFont( "hash", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = ScreenScale(4),
 	weight = 45,
 	antialias = true,
@@ -28,7 +28,7 @@ surface.CreateFont( "hash", {
 
 
 surface.CreateFont( "form", {
-	font = "LightSaberPlusBold",
+	font = "Arial",
 	size = 90,
 	weight = 45,
 	antialias = true,
