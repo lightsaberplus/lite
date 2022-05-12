@@ -107,7 +107,7 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadThirdPerson", function()
 end)
 
 surface.CreateFont( "cbutton", {
-	font = "Arial Black",
+	font = "LightSaberPlusLight",
 	extended = false,
 	size = ScreenScale(8),
 	weight = 500,
