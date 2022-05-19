@@ -24,7 +24,7 @@ local meta = FindMetaTable("Player")
 function meta:customizeHilt(hash, left)
 	local eyes = self:EyeAngles()
 	local wep = self:GetActiveWeapon()
-	if not wep.isCustomizable then return end
+	if not wep.isCustomizable then print(self:Nick().." is trying to use the Saber Crafter without an Craftable Lightsaber") return end
 	self:SetEyeAngles(Angle(0,eyes.y,0))
 	net.Start("saberplus-start-crystal-cuztom")
 		net.WriteCompressedTable(self:getInv())
