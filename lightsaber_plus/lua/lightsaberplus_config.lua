@@ -80,7 +80,7 @@ return {//Dont delete this line
     EnableThirdPersonSys = false,           -- Better First and ThirdPerson if you have a Lightsaber as current Weapon
     FirstPersonRealism = false,             -- Pitch & Yaw are determined by the playermodel.
     FirstPersonRealismLite = false,         -- Only the yaw is determined by the playermodel.
-    FirstPersonRealismSmooth = false        -- Adds smoothing to the above to make less jitter.
+    FirstPersonRealismSmooth = false,        -- Adds smoothing to the above to make less jitter.
 
     MaxForce = {
         ["1001"] = 100000,                   -- Force Power for this group
