@@ -64,19 +64,8 @@ net.Receive("saberplus-riposte", function()
 	addHit(pos, "PARRY!", Color(245, 245,25))
 end)
 
-local hide = {
-	["CHudHealth"] = true,
-	["CHudBattery"] = true,
-	["CHudAmmo"] = true,
-	["CHudVoiceStatus"] = true,
-	["CHudVoiceSelfStatus"] = true,
-	["CHudEnergy"] = true,
-	["DarkRP_EntityDisplay"] = true,
-	["DarkRP_HUD"] = true,
-	["CHudSecondaryAmmo"] = true
-}
 hook.Add( "HUDShouldDraw", "HideHUD", function( name )
-	if ( hide[ name ] ) then return false end
+	if name == "CHudAmmo" then return false end
 end)
 
 hook.Add("HUDPaint", "soimjdfghdfgh", function()
@@ -187,7 +176,7 @@ hook.Add("Think", "okpjdisfokgids", function()
 	if !IsValid(saberplusQuickMenu) then
 		createQuickMenu()
 	end
-	if open and not input.IsKeyDown(KEY_Q) then
+	if open and not input.IsKeyDown(KEY_Q) and saberplusQuickMenu.Opened < SysTime() then
 		saberplusQuickMenu:Hide()
 		saberplusQuickMenu:SetMouseInputEnabled(false)
 		open = false
@@ -199,7 +188,8 @@ hook.Add("SpawnMenuOpen", "LS+.OpenMenu", function()
 	if LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().isLightsaberPlus then
 	saberplusQuickMenu:Show()
 	saberplusQuickMenu:MakePopup()
-		open = true
+	saberplusQuickMenu.Opened = SysTime() + 5
+	open = true
 		return false
 	end
 end)
