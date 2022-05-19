@@ -82,4 +82,24 @@ return {//Dont delete this line
     FirstPersonRealismLite = false,         -- Only the yaw is determined by the playermodel.
     FirstPersonRealismSmooth = false        -- Adds smoothing to the above to make less jitter.
 
+    MaxForce = {
+        ["1001"] = 100000,                   -- Force Power for this group
+        ["Mayor"] = 1000
+        -- ^         ^
+        -- Job    Maximum
+        -- Name   ForcePower
+    },
+    PowerWhitelist{
+        ["1001"] = {
+                ["*"] = true                -- This job can use every forcepower
+        },
+        -- Job Name as Key
+        ["Mayor"] = {
+            ["Force Leap"] = true,
+            ["Force Crush"] = true,
+            ["Force Push"] = true,
+            ["Force Speed"] = true
+        --Available Force Powers the job can use
+        }
+    }
 }//Dont delete this line

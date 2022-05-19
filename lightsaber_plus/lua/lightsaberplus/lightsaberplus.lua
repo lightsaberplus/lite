@@ -1,9 +1,7 @@
 LSP = LSP or {
-    Version = "0.5",
+    Version = "0.5.1",
     Config = {
         Forms = {},
-        MaxForce = {},
-        TeamForcePowers = {},
         FormOrder = {},
 		Raritys = {
 			["Basic"] = Color(255, 255, 255),
@@ -158,19 +156,6 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function()
     		{anim = "pure_h_s1_t2", rate = 1.25, dmg = 1.5, shave = 0.1, speed = 25},
     	}
     }
-end)
-
-hook.Add("LS+.Config.Reloaded", "LS+.DetectGamemode", function()
-
-	local gm = GM or GAMEMODE or {}
-	if gm.Name == "Sandbox" then
-		LSP.Config.MaxForce[1001] = 100000
-		LSP.Config.TeamForcePowers[1001] = {
-			["*"] = true
-		}
-	else
-		hook.Run("LS+.Config.ForcePowers")
-	end
 end)
 
 function net.WriteCompressedTable(tbl)
