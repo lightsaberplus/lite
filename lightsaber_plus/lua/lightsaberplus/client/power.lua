@@ -820,9 +820,9 @@ function openNewPowers(f, mode)
 	
 	for id,data in pairs(getAllPowers()) do
 		local canSee = false
-		LSP.Config.TeamForcePowers[ply:Team()] = LSP.Config.TeamForcePowers[ply:Team()] or {}
+		LSP.Config.PowerWhitelist[team.GetName(ply:Team())] = LSP.Config.PowerWhitelist[team.GetName(ply:Team())] or {}
 
-		if LSP.Config.TeamForcePowers[ply:Team()][id] or LSP.Config.TeamForcePowers[ply:Team()]["*"] then
+		if LSP.Config.PowerWhitelist[team.GetName(ply:Team())][id] or LSP.Config.PowerWhitelist[team.GetName(ply:Team())]["*"] then
 			canSee = true
 		end
 		
