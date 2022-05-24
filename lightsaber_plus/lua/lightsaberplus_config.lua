@@ -89,7 +89,7 @@ return {//Dont delete this line
         -- Job    Maximum
         -- Name   ForcePower
     },
-    PowerWhitelist{
+    PowerWhitelist = {
         ["1001"] = {
                 ["*"] = true                -- This job can use every forcepower
         },
