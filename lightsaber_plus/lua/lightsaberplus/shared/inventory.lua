@@ -113,7 +113,7 @@ local crystalModels = {
 function createCrystal(name, wm, dmg, onHit, mtl)
 	for crystal,color in pairs(crystalModels) do
 		local mdl = crystal..wm
-		LSP.AddItem("kyber_crystal_" .. string.lower(name).."_"..mdl, {
+		LSP.AddItem("kyber_crystal_" .. string.lower(string.Replace(name," ", "_").."_"..mdl), {
 			name = name.." Kyber Crystal",
 			mdl = "models/"..mdl.."/"..mdl..".mdl",
 			desc = "+"..dmg.." DMG",
