@@ -253,6 +253,10 @@ end)
 
 concommand.Add("customizeCrystal", function(ply, cmd, args)
 	if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon().isLightsaberPlus and ply:GetActiveWeapon().isCustomizable then
-		ply:customizeHilt(ply:GetActiveWeapon().hash)
+		if ply:GetActiveWeapon().hash then
+			ply:customizeHilt(ply:GetActiveWeapon().hash)
+		else
+			ply:ChatPrint("[LS+] You need to equip a valid hilt frorm the inventory first, before opening the Crafter!")
+		end
 	end
 end)
