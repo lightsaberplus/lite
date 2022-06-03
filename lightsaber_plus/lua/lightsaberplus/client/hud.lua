@@ -65,6 +65,7 @@ net.Receive("saberplus-riposte", function()
 end)
 
 hook.Add( "HUDShouldDraw", "HideHUD", function( name )
+	if LSP.Config.KillHud then return end
 	if name == "CHudAmmo" then return false end
 end)
 

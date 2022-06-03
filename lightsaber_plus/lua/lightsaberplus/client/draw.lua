@@ -16,26 +16,13 @@ hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	if isDebugging then
 		for k,v in pairs(customDebugLines) do
 			if v.life >= CurTime() then
-				if v.start and v.endpos then
-					render.DrawLine(v.start, v.endpos, v.color)
-				else
-					table.remove(customDebugLines, k)
-				end
+				render.DrawLine(v.start, v.endpos, v.color)
 			else
 				table.remove(customDebugLines, k)
 			end
 		end
 	else
 		customDebugLines = {}
-	end
-end)
-
-hook.Add("HUDPaint", "20j8i34rt", function()
-	if isDebugging then
-		for k,v in pairs(customDebugLines) do
-			local p = v.start:ToScreen()
-			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
-		end
 	end
 end)
 
@@ -111,7 +98,7 @@ function handleLightsaber(saber, ply, wep, item, left)
 		saber:SetBodygroup(k,v)
 	end
 
-	if left then
+	if left and not ply:getsyncLightsaberPlusData("crafting", false) then
 		local bone = ply:LookupBone("ValveBiped.Bip01_L_Hand") or 0
 		local pos, ang = ply:GetBonePosition(bone)
 
@@ -347,13 +334,14 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
-
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
 
 					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
 
-					if item2 then searchAttachments(ply, wep, ply.leftHilt, true)
-					else ply.leftHilt:SetNoDraw(true)
+					if item2 then
+						searchAttachments(ply, wep, ply.leftHilt, true)
+					else
+						ply.leftHilt:SetNoDraw(true)
 					end
 
 					if not (wep:getsyncLightsaberPlusData("saberOn") or IsValid(SABER_CRAFTING_MENU)) then
