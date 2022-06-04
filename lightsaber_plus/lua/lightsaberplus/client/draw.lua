@@ -323,14 +323,12 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				validateSabers(ply)
 				craftingPosition(ply,  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("isLeft", false) or false)
 
-				if not IsValid(wep) or not wep.isLightsaberPlus then hideSabers(ply, true) return end
-
 				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
 				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 
-				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) then
+				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
@@ -350,6 +348,8 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 						ply.blades = {}
 						ply:stopSounds()
 					end
+				else
+					hideSabers(ply, true)
 				end
 			end
 		end
