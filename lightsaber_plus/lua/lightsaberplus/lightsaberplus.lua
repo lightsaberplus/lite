@@ -1,5 +1,5 @@
 LSP = LSP or {
-    Version = "0.5.1",
+    Version = "0.5.2",
     Config = {
         Forms = {},
         FormOrder = {},
@@ -160,4 +160,4 @@ end)
 
 
 // DEVELOPMENT ONLY
-if true then LSP:Initialize() end 
+//if true then LSP:Initialize() end 
