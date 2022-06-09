@@ -120,8 +120,6 @@ function createQuickMenu()
 		surface.SetDrawColor( 5, 5, 5, 255 )
 		surface.DrawRect( 0, 0, w, h )
 	end
-	saberplusQuickMenu:Hide()
-	saberplusQuickMenu:SetMouseInputEnabled(false)
 	saberplusQuickMenu:DockPadding(5,5,5,5)
 
 	for name,data in pairs(buttonData) do
