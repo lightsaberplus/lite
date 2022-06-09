@@ -158,15 +158,6 @@ hook.Add("LS+.Config.Reloaded", "LS+.LoadNormalForms", function()
     }
 end)
 
-function net.WriteCompressedTable(tbl)
-	local data = util.TableToJSON(tbl)
-	data = util.Compress(data)
-	net.WriteInt(#data, 32)
-	net.WriteData(data, #data)
-end
 
-function net.ReadCompressedTable()
-	local num = net.ReadInt(32)
-	local data = util.Decompress(net.ReadData(num))
-	return util.JSONToTable(data)
-end
+// DEVELOPMENT ONLY
+if true then LSP:Initialize() end 

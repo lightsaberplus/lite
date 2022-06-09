@@ -340,7 +340,7 @@ hook.Add("EntityTakeDamage", "dgkomihdslfgh", function(ply, dmg)
 			end
 			
 			local ed = EffectData()
-			ed:SetOrigin(dmg:GetDamagePosition())
+			ed:SetOrigin(dmg:GetDamagePosition()) //https://cdn.discordapp.com/attachments/762098653937795073/962385427610882139/unknown.png
 			util.Effect("cball_bounce", ed)
 
 			ply.lastStaminaDrain = CurTime() + LSP.Config.RegenDelay

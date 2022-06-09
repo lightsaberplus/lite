@@ -25,30 +25,28 @@ function meta:customizeHilt(hash, left)
 	local eyes = self:EyeAngles()
 	local wep = self:GetActiveWeapon()
 	if not wep.isCustomizable then print(self:Nick().." is trying to use the Saber Crafter without an Craftable Lightsaber") return end
+	if not hash then print("Found no hash") return end
 	self:SetEyeAngles(Angle(0,eyes.y,0))
 	net.Start("saberplus-start-crystal-cuztom")
 		net.WriteCompressedTable(self:getInv())
 		local quillons = {}
 		for i=1,10 do
-			quillons[i] = itemGetData(hash, "quillon"..i, "")
+			quillons[i] = itemGetData(hash, left and "OFFHAND-quillon"..i or "quillon"..i, "")
 		end
 		net.WriteCompressedTable(quillons)
-		
 		local blades = {}
 		for i=1,10 do
-			blades[i] = itemGetData(hash, "blade"..i, "")
+			blades[i] = itemGetData(hash, left and "OFFHAND-blade"..i or "blade"..i, "")
 		end
 		net.WriteCompressedTable(blades)
-		
 		local bladeInners = {}
 		for i=1,10 do
-			bladeInners[i] = itemGetData(hash, "bladeInner"..i, "")
+			bladeInners[i] = itemGetData(hash, left and "OFFHAND-bladeInner"..i or "bladeInner"..i, "")
 		end
 		net.WriteCompressedTable(bladeInners)
-		
 		local quillonInners = {}
 		for i=1,10 do
-			quillonInners[i] = itemGetData(hash, "quillonInner"..i, "")
+			quillonInners[i] = itemGetData(hash, left and "OFFHAND-quillonInner"..i or "quillonInner"..i, "")
 		end
 		net.WriteCompressedTable(quillonInners)
 		net.WriteBool(left)
@@ -253,6 +251,10 @@ end)
 
 concommand.Add("customizeCrystal", function(ply, cmd, args)
 	if IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon().isLightsaberPlus and ply:GetActiveWeapon().isCustomizable then
-		ply:customizeHilt(ply:GetActiveWeapon().hash)
+		if ply:GetActiveWeapon().hash then
+			ply:customizeHilt(ply:GetActiveWeapon().hash)
+		else
+			ply:ChatPrint("[LS+] You need to equip a valid hilt frorm the inventory first, before opening the Crafter!")
+		end
 	end
 end)

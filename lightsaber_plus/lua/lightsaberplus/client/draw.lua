@@ -16,26 +16,13 @@ hook.Add("PostDrawOpaqueRenderables", "dfosmkgsdf5673567375g", function()
 	if isDebugging then
 		for k,v in pairs(customDebugLines) do
 			if v.life >= CurTime() then
-				if v.start and v.endpos then
-					render.DrawLine(v.start, v.endpos, v.color)
-				else
-					table.remove(customDebugLines, k)
-				end
+				render.DrawLine(v.start, v.endpos, v.color)
 			else
 				table.remove(customDebugLines, k)
 			end
 		end
 	else
 		customDebugLines = {}
-	end
-end)
-
-hook.Add("HUDPaint", "20j8i34rt", function()
-	if isDebugging then
-		for k,v in pairs(customDebugLines) do
-			local p = v.start:ToScreen()
-			draw.RoundedBox( 2, p.x-2, p.y-2, 4, 4, Color(255,0,0))
-		end
 	end
 end)
 
@@ -111,7 +98,7 @@ function handleLightsaber(saber, ply, wep, item, left)
 		saber:SetBodygroup(k,v)
 	end
 
-	if left then
+	if left and not ply:getsyncLightsaberPlusData("crafting", false) then
 		local bone = ply:LookupBone("ValveBiped.Bip01_L_Hand") or 0
 		local pos, ang = ply:GetBonePosition(bone)
 
@@ -336,24 +323,23 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				validateSabers(ply)
 				craftingPosition(ply,  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("isLeft", false) or false)
 
-				if not IsValid(wep) or not wep.isLightsaberPlus then hideSabers(ply, true) return end
-
 				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
 				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 
-				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) then
+				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
-
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
 
 					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
 
-					if item2 then searchAttachments(ply, wep, ply.leftHilt, true)
-					else ply.leftHilt:SetNoDraw(true)
+					if item2 then
+						searchAttachments(ply, wep, ply.leftHilt, true)
+					else
+						ply.leftHilt:SetNoDraw(true)
 					end
 
 					if not (wep:getsyncLightsaberPlusData("saberOn") or IsValid(SABER_CRAFTING_MENU)) then
@@ -362,6 +348,8 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 						ply.blades = {}
 						ply:stopSounds()
 					end
+				else
+					hideSabers(ply, true)
 				end
 			end
 		end
