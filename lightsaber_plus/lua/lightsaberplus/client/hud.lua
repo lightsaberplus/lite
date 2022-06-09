@@ -121,6 +121,8 @@ function createQuickMenu()
 		surface.DrawRect( 0, 0, w, h )
 	end
 	saberplusQuickMenu:DockPadding(5,5,5,5)
+	saberplusQuickMenu:MakePopup()
+	saberplusQuickMenu.Opened = SysTime() + 5
 
 	for name,data in pairs(buttonData) do
 		local check = data.check(LocalPlayer())
@@ -169,26 +171,18 @@ function createQuickMenu()
 	end
 end
 
-local open = false
-hook.Add("Think", "okpjdisfokgids", function()
-	if !IsValid(saberplusQuickMenu) then
-		createQuickMenu()
-	end
-	if open and not input.IsKeyDown(KEY_Q) and saberplusQuickMenu.Opened < SysTime() then
-		saberplusQuickMenu:Hide()
-		saberplusQuickMenu:SetMouseInputEnabled(false)
-		open = false
+
+hook.Add("OnSpawnMenuClose", "okpjdisfokgids", function()
+	if  saberplusQuickMenu then
+		saberplusQuickMenu:Remove()
 	end
 end)
 
 
 hook.Add("SpawnMenuOpen", "LS+.OpenMenu", function()
 	if LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon().isLightsaberPlus then
-	saberplusQuickMenu:Show()
-	saberplusQuickMenu:MakePopup()
-	saberplusQuickMenu.Opened = SysTime() + 5
-	open = true
-		return false
+		createQuickMenu()
+	return false
 	end
 end)
 
