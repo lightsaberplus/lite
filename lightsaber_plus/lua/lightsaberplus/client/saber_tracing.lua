@@ -11,9 +11,9 @@ function runSaberTrace(ply, bladeID, pos, ang, id, length, segments)
 		ply.bladePos[scanID] = ply.bladePos[scanID] or {}
 		local endPos = pos + ang:Forward() * (dist*i)
 
-		LSP.AddDebugLines(endPos, ply.bladePos[scanID].lastPos, Color(i*(255/segments),0,250 - i*(255/segments),255))
-
+		
 		if ply.bladePos[scanID].lastPos then
+			LSP.AddDebugLines(endPos, ply.bladePos[scanID].lastPos, Color(i*(255/segments),0,250 - i*(255/segments),255))
 			local tr = util.TraceLine({
 				start = endPos,
 				endpos = ply.bladePos[scanID].lastPos,

@@ -184,7 +184,7 @@ function openSaberCrafter(inv, quillons, blades, bladeInner, quillonInner, left)
         surface.DrawRect(ww - 1, 0, 1, hh)
     end
 
-    hook.Run("SaberCrafter", f, w, h)
+    hook.Run("SaberCrafter", f, w, h, left)
     local saber = ply.rightHilt
 
     if left then
