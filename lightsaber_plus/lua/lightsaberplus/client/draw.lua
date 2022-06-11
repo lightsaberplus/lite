@@ -323,18 +323,20 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				validateSabers(ply)
 				craftingPosition(ply,  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("isLeft", false) or false)
 
-				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
-				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
+				local class =  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("itemClass", "eroo") or nil
+				local class2 =  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4") or nil
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 
-				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
+				if item and IsValid(wep) and wep.isLightsaberPlus then
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
 
-					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
+					if not item.isMelee then 
+						searchAttachments(ply, wep, ply.rightHilt)
+					end
 
 					if item2 then
 						searchAttachments(ply, wep, ply.leftHilt, true)
@@ -359,4 +361,3 @@ end)
 concommand.Add("toggleLines", function()
 	isDebugging = not isDebugging
 end)
-
