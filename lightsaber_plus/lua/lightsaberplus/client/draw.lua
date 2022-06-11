@@ -328,13 +328,15 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 
-				if item and IsValid(wep) and IsValid(ply.rightHilt) and IsValid(ply.leftHilt) and wep.isLightsaberPlus then
+				if item and IsValid(wep) and wep.isLightsaberPlus then
 					hideSabers(ply, false)
 
 					handleLightsaber(ply.rightHilt, ply, wep, item, false)
 					if item2 then handleLightsaber(ply.leftHilt, ply, wep, item2, true) end
 
-					if not item.isMelee then searchAttachments(ply, wep, ply.rightHilt) end
+					if not item.isMelee then 
+						searchAttachments(ply, wep, ply.rightHilt)
+					end
 
 					if item2 then
 						searchAttachments(ply, wep, ply.leftHilt, true)
