@@ -323,8 +323,8 @@ hook.Add("PostDrawTranslucentRenderables", "4222222222222222222222222222g", func
 				validateSabers(ply)
 				craftingPosition(ply,  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("isLeft", false) or false)
 
-				local class = wep:getsyncLightsaberPlusData("itemClass", "eroo")
-				local class2 = wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4")
+				local class =  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("itemClass", "eroo") or nil
+				local class2 =  wep.getsyncLightsaberPlusData and wep:getsyncLightsaberPlusData("OFFHAND-itemClass", "ero4") or nil
 				local item = LSP.GetItem(class)
 				local item2 = LSP.GetItem(class2)
 
@@ -359,4 +359,3 @@ end)
 concommand.Add("toggleLines", function()
 	isDebugging = not isDebugging
 end)
-

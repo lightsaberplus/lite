@@ -70,36 +70,3 @@ end)
 hook.Add("PlayerInitialSpawn", "lookisdafsdf.", function(ply)
 	TOTALLY_SAFER_SAVE_DATA[ply:id()] = {}
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
