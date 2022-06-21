@@ -33,6 +33,7 @@ LIGHTSABER_PLUS_3P_ANGOFF = cookie.GetNumber("LIGHTSABER_PLUS_3P_ANGOFF", 0)
 
 local headPos = Vector(0,0,0)
 local headAng = Angle(0,0,0)
+
 local eyesLerp = Angle(0,0,0)
 
 hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
@@ -136,9 +137,9 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 				return view
 			end
 		elseif wep.isLightsaberPlus then
-			if GetConVar( "simple_thirdperson_enabled" ):GetBool() then return end
+			local pos2 = ply:LookupBone("ValveBiped.Bip01_Head1") and ply:GetBonePosition( ply:LookupBone("ValveBiped.Bip01_Head1") ) or ply:EyePos()
 			return {
-				origin = ply:EyePos()+ ang:Forward()*15 + ang:Up()*10,
+				origin = pos2 + ang:Forward() * 4 + ang:Up() * 10,
 				angles = ang,
 				fov = fov,
 				drawviewer = true
