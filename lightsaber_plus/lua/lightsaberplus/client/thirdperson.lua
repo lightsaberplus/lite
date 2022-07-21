@@ -136,6 +136,14 @@ hook.Add("CalcView", "CL_Secondpersonz44", function(ply, pos, ang, fov)
 
 				return view
 			end
+		elseif wep.isLightsaberPlus then
+			local pos2 = ply:LookupBone("ValveBiped.Bip01_Head1") and ply:GetBonePosition( ply:LookupBone("ValveBiped.Bip01_Head1") ) or ply:EyePos()
+			return {
+				origin = pos2 + ang:Forward() * 4 + ang:Up() * 10,
+				angles = ang,
+				fov = fov,
+				drawviewer = true
+			}
 		end
 	end
 end)

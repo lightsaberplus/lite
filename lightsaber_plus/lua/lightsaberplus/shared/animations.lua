@@ -22,8 +22,6 @@ fallingTranslation["camera"] = "swimming_camera"
 fallingTranslation["magic"] = "swimming_magic"
 fallingTranslation["revolver"] = "swimming_revolver"
 
-
-
 function meta:killTime(id)
 	timer.Remove(id .. self:id())
 end
@@ -119,7 +117,12 @@ function overrideAnimation()
 		return t -- allows us to see how long we're going to play for.
 	end
 
+	local old = GAMEMODE.CalcMainActivity
 	function GAMEMODE:CalcMainActivity(ply, v)
+		local p = ply:GetActiveWeapon()
+		if not p or not p.isLightsaberPlus then
+			return old(self, ply, v)
+		end
 		ply.m_bWasOnGround = ply:IsOnGround()
 		ply.m_bWasNoclipping = ( ply:GetMoveType() == MOVETYPE_NOCLIP and !ply:InVehicle() )
 
@@ -259,7 +262,7 @@ function overrideAnimation()
 	end
 end
 
--- NUTSCRIPT OVERRIDES, makes sure this shit loads even after updating server, takes ~60s.
-hook.Add( "PostGamemodeLoaded", "fdgher6u465u46u", function() overrideAnimation() end) 										 -- NUTSCRIPT OVERRIDES.
-local loadTime = 0																											 -- NUTSCRIPT OVERRIDES.
-hook.Add("Think", "4290jk", function() if loadTime <= CurTime() then overrideAnimation() loadTime = CurTime() + 60 end end)  -- NUTSCRIPT OVERRIDES.
+hook.Add( "PostGamemodeLoaded", "fdgher6u465u46u", function()
+	timer.Simple(5, overrideAnimation)
+end)
+
